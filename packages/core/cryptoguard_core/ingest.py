@@ -44,8 +44,12 @@ FatalKind = Literal[
     "numeric_field",
     "duplicate_open_time",
     "ohlc_invariant",
+    "non_positive_price",
     "missing_decision_day_bar",
     "unaligned_decision_day_bar",
+    "warm_up_underrun",
+    "stale_anchor",
+    "degenerate_window",
 ]
 FlagKind = Literal["unaligned_open_time", "bar_duration", "short_day"]
 
@@ -140,6 +144,13 @@ def _parse_archive(archive: Path) -> list[Bar]:
                 f"{archive.name}: non-numeric field in the row opening at "
                 f"{_instant(open_time_ms)}: {error}",
             ) from error
+        if min(open_, high, low, close) <= 0:
+            raise FatalDefect(
+                "non_positive_price",
+                f"{archive.name}: non-positive price at {_instant(open_time_ms)} "
+                f"(o={open_} h={high} l={low} c={close}); zero volume is real data, "
+                "zero price is not",
+            )
         if not (low <= min(open_, close) and max(open_, close) <= high and low <= high):
             raise FatalDefect(
                 "ohlc_invariant",

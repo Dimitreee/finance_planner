@@ -216,3 +216,14 @@ def test_non_numeric_price_is_fatal(snapshot: SnapshotBuilder) -> None:
     with pytest.raises(FatalDefect) as caught:
         load_archive_backfill(snapshot(rows=[row]))
     assert caught.value.kind == "numeric_field"
+
+
+def test_non_positive_price_is_fatal(snapshot: SnapshotBuilder) -> None:
+    """An all-zero row satisfies the OHLC invariant, so positivity is checked separately.
+
+    Synthesised: the verified snapshot has zero such rows. Zero *volume* is different — four real
+    bars carry it — so positivity is required of prices only.
+    """
+    with pytest.raises(FatalDefect) as caught:
+        load_archive_backfill(snapshot(rows=synthetic_rows((JUNE_FIRST, 0.0, 0.0, 0.0, 0.0))))
+    assert caught.value.kind == "non_positive_price"
