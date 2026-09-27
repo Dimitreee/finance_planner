@@ -45,6 +45,7 @@ class PaperTrackPoint:
     action: Action
     btc: float
     usdt: float
+    price: float
     value_usdt: float
 
 
@@ -108,7 +109,9 @@ TrackRow = tuple[date, Action, float, float, float]
 
 def build_paper_track(rows: Iterable[TrackRow]) -> PaperTrack:
     points = tuple(
-        PaperTrackPoint(day=day, action=action, btc=btc, usdt=usdt, value_usdt=btc * price + usdt)
+        PaperTrackPoint(
+            day=day, action=action, btc=btc, usdt=usdt, price=price, value_usdt=btc * price + usdt
+        )
         for day, action, btc, usdt, price in rows
     )
     return PaperTrack(genesis_day=points[0].day if points else None, points=points)

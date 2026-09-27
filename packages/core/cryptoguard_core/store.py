@@ -50,14 +50,22 @@ class PublishedRun:
 class RunStore:
     """Every read and write of published state. One connection per operation; the job is a batch."""
 
-    # Without a bound, libpq waits for the OS TCP timeout. The API opens a connection per request
-    # in a bounded thread pool, so a database that blackholes packets would park every worker and
-    # take the liveness endpoint down with them.
+    # Two different stalls need two different bounds. `connect_timeout` covers a host that never
+    # completes the handshake; `statement_timeout` covers one that accepts the connection and then
+    # never answers. Without the second, a lock wait would hold a request thread indefinitely.
     CONNECT_TIMEOUT_SECONDS = 5
+    STATEMENT_TIMEOUT_MS = 10_000
 
-    def __init__(self, dsn: str, *, connect_timeout: int = CONNECT_TIMEOUT_SECONDS) -> None:
+    def __init__(
+        self,
+        dsn: str,
+        *,
+        connect_timeout: int = CONNECT_TIMEOUT_SECONDS,
+        statement_timeout_ms: int = STATEMENT_TIMEOUT_MS,
+    ) -> None:
         self._dsn = dsn
         self._connect_timeout = connect_timeout
+        self._options = f"-c timezone=UTC -c statement_timeout={statement_timeout_ms}"
 
     @property
     def dsn(self) -> str:
@@ -71,6 +79,8 @@ class RunStore:
         the same position and both publishing, which would silently discard one transition. This
         serialises the read-modify-write that the schema cannot.
         """
+        # The lock is held for the whole job, which is longer than a statement timeout should allow,
+        # so this connection sets only the zone.
         with psycopg.connect(
             self._dsn, options="-c timezone=UTC", connect_timeout=self._connect_timeout
         ) as connection:
@@ -88,7 +98,7 @@ class RunStore:
         # `timestamptz` comes back rendered in the server's zone, so the same instant would be
         # served as 03:00+03:00 in one deployment and 00:00+00:00 in another.
         with psycopg.connect(
-            self._dsn, options="-c timezone=UTC", connect_timeout=self._connect_timeout
+            self._dsn, options=self._options, connect_timeout=self._connect_timeout
         ) as connection:
             yield connection
 

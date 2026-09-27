@@ -129,6 +129,7 @@ def test_the_paper_track_is_served_with_its_genesis_day(store: RunStore) -> None
     assert body["genesis_day"] == "2026-09-26"
     assert [point["day"] for point in body["points"]] == ["2026-09-26", "2026-09-27"]
     assert body["points"][0]["value_usdt"] == 900.0
+    assert body["points"][0]["price"] == 100.0, "the page needs a price series to draw"
 
 
 def test_health_answers_while_the_database_is_unreachable() -> None:

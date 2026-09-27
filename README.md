@@ -70,13 +70,24 @@ uv run uvicorn --factory cryptoguard_api:create_app --port 8000
 The process loads no model weights and holds no data provider credentials: it reads published state
 and nothing else, and a test asserts that by inspecting what the package imports.
 
+## The page
+
+```sh
+cd apps/web && npm install && npm run dev
+```
+
+It serves on http://localhost:5173 and proxies `/api` to the API on port 8000, so run both. The page
+shows today's action with the one-day horizon, the probability and the rule behind it, the
+explanation, the data cutoff and freshness, the simulated portfolio, and the track since launch with
+a price chart. See `apps/web/README.md`.
+
 ## Layout
 
 | Path             | What lives there                                                        |
 | ---------------- | ----------------------------------------------------------------------- |
 | `packages/core`  | Shared domain core: data contracts, features, models, policy, backtest   |
 | `apps/api`       | Read-only HTTP surface over published state; no weights, no credentials  |
-| `apps/web`       | Web UI                                                                  |
+| `apps/web`       | Web UI: React and TypeScript, built with Vite                           |
 | `jobs`           | Batch entry points: ingest, decide, publish                             |
 | `config`         | The Experiment Contract and other frozen configuration                  |
 | `migrations`     | Database schema changes                                                 |

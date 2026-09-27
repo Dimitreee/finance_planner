@@ -27,6 +27,12 @@ from cryptoguard_core.dataset import (
     WARM_UP_DAYS,
 )
 from cryptoguard_core.ingest import FatalDefect
+from cryptoguard_core.protocol import (
+    DECISION_DEADLINE_UTC,
+    EXECUTION_UTC,
+    FEATURE_CUTOFF_UTC,
+    HORIZON_DAYS,
+)
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 CONTRACT_PATH = _REPO_ROOT / "config/experiment.yaml"
@@ -135,6 +141,19 @@ def _check(values: Mapping[str, Any]) -> None:
     span = (window["last_day"] - window["first_day"]).days + 1
     if window["decision_days"] != span:
         _refuse(f"research_window.decision_days {window['decision_days']} != {span} actual days")
+
+    protocol = values["decision_protocol"]
+    expected_protocol = {
+        "feature_cutoff": FEATURE_CUTOFF_UTC,
+        "decision_deadline": DECISION_DEADLINE_UTC,
+        "execution": EXECUTION_UTC,
+        "horizon_days": HORIZON_DAYS,
+    }
+    for key, expected in expected_protocol.items():
+        if protocol[key] != expected:
+            _refuse(
+                f"decision_protocol.{key} is {protocol[key]!r}, but the code states {expected!r}"
+            )
 
     if tuple(values["features"]["arm_a"]) != ARM_A_FEATURES:
         _refuse("features.arm_a does not match the frozen Arm A feature list in the code")

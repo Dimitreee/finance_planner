@@ -102,6 +102,7 @@ def test_the_paper_track_carries_its_genesis_day() -> None:
     assert track.genesis_day == date(2026, 9, 26)
     assert [point.day for point in track.points] == days
     assert track.points[0].value_usdt == 110.0
+    assert track.points[0].price == 100.0
 
 
 def test_an_empty_paper_track_has_no_genesis() -> None:

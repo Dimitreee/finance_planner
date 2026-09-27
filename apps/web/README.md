@@ -1,7 +1,18 @@
 # Web UI
 
-Not scaffolded yet. It arrives with the page ticket, which builds the advice panel and the Paper Track
-panel against the read API.
+One page: today's advice, the simulated portfolio, and the track since launch.
 
-Keeping the scaffold out until then avoids carrying a `node_modules` tree through the data and job
-tickets, which do not need it.
+```sh
+npm install
+npm run dev        # http://localhost:5173, proxying /api to http://localhost:8000
+npm test           # component tests
+npm run typecheck  # tsc --noEmit
+npm run build
+```
+
+The API must be running for the page to show anything; see the root README.
+
+The wording lives in `src/format.ts` rather than inside the markup, because the wording *is* the
+requirement: a decision from an earlier day is reported in the past tense with its date in the
+sentence, never as an instruction, and a missing decision is stated as a failure to publish rather
+than as a neutral view of the market. Those rules are what the tests assert.

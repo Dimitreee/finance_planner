@@ -17,6 +17,7 @@ from datetime import UTC, date, datetime
 from typing import Any
 
 import cryptoguard_core
+from cryptoguard_core.protocol import DECISION_DEADLINE_UTC, HORIZON_DAYS
 from cryptoguard_core.serving import advice_view, build_paper_track
 from cryptoguard_core.store import RunStore
 from fastapi import FastAPI
@@ -49,7 +50,9 @@ def create_app(
     published = store if store is not None else _store_from_environment()
 
     @app.get("/api/health")
-    def health() -> dict[str, str]:
+    async def health() -> dict[str, str]:
+        # Async on purpose: a sync handler runs in the bounded thread pool that the database-backed
+        # endpoints also use, so a stalled database would stop liveness answering as well.
         return {"status": "ok", "core_version": cryptoguard_core.__version__}
 
     @app.get("/api/advice")
@@ -57,6 +60,12 @@ def create_app(
         view = advice_view(published.latest_published(asset), today())
         return {
             "asset": asset,
+            # Protocol constants the page states to the reader. Serving them keeps the client from
+            # holding a second copy of values the contract already fixes.
+            "protocol": {
+                "horizon_days": HORIZON_DAYS,
+                "decision_deadline_utc": DECISION_DEADLINE_UTC,
+            },
             "freshness": view.freshness,
             "model_mode": view.model_mode,
             "decision_day": view.decision_day.isoformat() if view.decision_day else None,
@@ -90,6 +99,7 @@ def create_app(
                     "action": point.action,
                     "btc": point.btc,
                     "usdt": point.usdt,
+                    "price": point.price,
                     "value_usdt": point.value_usdt,
                 }
                 for point in track.points
