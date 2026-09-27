@@ -55,6 +55,21 @@ CRYPTOGUARD_TEST_DATABASE_URL=postgresql://cryptoguard:cryptoguard@localhost:543
 They **drop and recreate** their tables, so give them a database of their own. Without that variable
 they skip, and the rest of the suite runs with no database at all.
 
+## The read API
+
+```sh
+uv run uvicorn --factory cryptoguard_api:create_app --port 8000
+```
+
+- `GET /api/health` — liveness. Needs no database and no configuration.
+- `GET /api/advice` — the newest Published Run: action, probability, position, explanation, the data
+  cutoff, and two independent fields, `freshness` (`current` / `stale` / `unavailable`) and
+  `model_mode` (`price-only` / `fused` / `replay`).
+- `GET /api/paper-track` — the live track since go-live, with its genesis day.
+
+The process loads no model weights and holds no data provider credentials: it reads published state
+and nothing else, and a test asserts that by inspecting what the package imports.
+
 ## Layout
 
 | Path             | What lives there                                                        |

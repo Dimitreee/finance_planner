@@ -167,6 +167,7 @@ def run_decision_job(
                 decision_day=day,
                 feature_cutoff=feature_cutoff,
                 decision_time=decision_time,
+                decision_price=row.decision_price,
                 probability=forecast.probability,
                 target_exposure=trace.target_exposure,
                 action=result.action,

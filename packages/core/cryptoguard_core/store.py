@@ -30,6 +30,7 @@ class PublishedRun:
     decision_day: date
     feature_cutoff: datetime
     decision_time: datetime
+    decision_price: float
     probability: float
     target_exposure: float
     action: Action
@@ -49,8 +50,14 @@ class PublishedRun:
 class RunStore:
     """Every read and write of published state. One connection per operation; the job is a batch."""
 
-    def __init__(self, dsn: str) -> None:
+    # Without a bound, libpq waits for the OS TCP timeout. The API opens a connection per request
+    # in a bounded thread pool, so a database that blackholes packets would park every worker and
+    # take the liveness endpoint down with them.
+    CONNECT_TIMEOUT_SECONDS = 5
+
+    def __init__(self, dsn: str, *, connect_timeout: int = CONNECT_TIMEOUT_SECONDS) -> None:
         self._dsn = dsn
+        self._connect_timeout = connect_timeout
 
     @property
     def dsn(self) -> str:
@@ -64,7 +71,9 @@ class RunStore:
         the same position and both publishing, which would silently discard one transition. This
         serialises the read-modify-write that the schema cannot.
         """
-        with psycopg.connect(self._dsn) as connection:
+        with psycopg.connect(
+            self._dsn, options="-c timezone=UTC", connect_timeout=self._connect_timeout
+        ) as connection:
             connection.execute("SELECT pg_advisory_lock(hashtext(%s))", (asset,))
             connection.commit()
             try:
@@ -75,7 +84,12 @@ class RunStore:
 
     @contextmanager
     def _connect(self) -> Iterator[psycopg.Connection]:
-        with psycopg.connect(self._dsn) as connection:
+        # Every instant in this project is defined in UTC. Without pinning the session timezone,
+        # `timestamptz` comes back rendered in the server's zone, so the same instant would be
+        # served as 03:00+03:00 in one deployment and 00:00+00:00 in another.
+        with psycopg.connect(
+            self._dsn, options="-c timezone=UTC", connect_timeout=self._connect_timeout
+        ) as connection:
             yield connection
 
     def migrate(self) -> None:
@@ -124,7 +138,8 @@ class RunStore:
     def latest_published(self, asset: str) -> PublishedRun | None:
         with self._connect() as connection:
             row = connection.execute(
-                "SELECT asset, decision_day, feature_cutoff, decision_time, probability, "
+                "SELECT asset, decision_day, feature_cutoff, decision_time, decision_price, "
+                "probability, "
                 "target_exposure, action, position_before_btc, position_before_usdt, "
                 "position_after_btc, position_after_usdt, trade_notional, trade_fee, trade_price, "
                 "explanation, model_version, policy_version, contract_digest, model_mode, "
@@ -140,20 +155,21 @@ class RunStore:
             decision_day=row[1],
             feature_cutoff=row[2],
             decision_time=row[3],
-            probability=row[4],
-            target_exposure=row[5],
-            action=row[6],
-            position_before=Position(btc=row[7], usdt=row[8]),
-            position_after=Position(btc=row[9], usdt=row[10]),
-            trade_notional=row[11],
-            trade_fee=row[12],
-            trade_price=row[13],
-            explanation=row[14],
-            model_version=row[15],
-            policy_version=row[16],
-            contract_digest=row[17],
-            model_mode=row[18],
-            run_bundle_path=row[19],
+            decision_price=row[4],
+            probability=row[5],
+            target_exposure=row[6],
+            action=row[7],
+            position_before=Position(btc=row[8], usdt=row[9]),
+            position_after=Position(btc=row[10], usdt=row[11]),
+            trade_notional=row[12],
+            trade_fee=row[13],
+            trade_price=row[14],
+            explanation=row[15],
+            model_version=row[16],
+            policy_version=row[17],
+            contract_digest=row[18],
+            model_mode=row[19],
+            run_bundle_path=row[20],
         )
 
     def published_count(self, asset: str) -> int:
@@ -168,24 +184,40 @@ class RunStore:
         latest = self.latest_published(asset)
         return genesis if latest is None else latest.position_after
 
+    def paper_track(self, asset: str) -> list[tuple[date, Action, float, float, float]]:
+        """Every published day, oldest first: what the live track is made of."""
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT decision_day, action, position_after_btc, position_after_usdt, "
+                "decision_price FROM published_runs WHERE asset = %s "
+                "ORDER BY decision_day ASC, id ASC",
+                (asset,),
+            ).fetchall()
+        return [
+            (day, action, float(btc), float(usdt), float(price))
+            for day, action, btc, usdt, price in rows
+        ]
+
     def publish(self, run: PublishedRun) -> bool:
         """Write the run and its position transition. False means this key was already published."""
         with self._connect() as connection:
             row = connection.execute(
                 "INSERT INTO published_runs ("
-                " asset, decision_day, feature_cutoff, decision_time, probability, target_exposure,"
+                " asset, decision_day, feature_cutoff, decision_time, decision_price,"
+                " probability, target_exposure,"
                 " action, position_before_btc, position_before_usdt, position_after_btc,"
                 " position_after_usdt, trade_notional, trade_fee, trade_price, explanation,"
                 " model_version, policy_version, contract_digest, model_mode, run_bundle_path"
                 ") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,"
                 # Any conflict means this Decision Day is already published: on the day-level
                 # constraint or on the version-scoped one, the answer is the same.
-                " %s, %s) ON CONFLICT DO NOTHING RETURNING id",
+                " %s, %s, %s) ON CONFLICT DO NOTHING RETURNING id",
                 (
                     run.asset,
                     run.decision_day,
                     run.feature_cutoff,
                     run.decision_time,
+                    run.decision_price,
                     run.probability,
                     run.target_exposure,
                     run.action,

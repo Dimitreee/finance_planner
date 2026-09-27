@@ -7,6 +7,7 @@ import json
 import cryptoguard_core
 import pytest
 from cryptoguard_api import create_app
+from cryptoguard_core.store import RunStore
 from cryptoguard_jobs.cli import main
 from fastapi.testclient import TestClient
 
@@ -16,7 +17,11 @@ def test_core_reports_a_version() -> None:
 
 
 def test_api_serves_health_carrying_the_core_version() -> None:
-    client = TestClient(create_app())
+    # A store is injected because the app refuses to start unconfigured; the point here is only
+    # that the API app genuinely reaches the shared core.
+    client = TestClient(
+        create_app(RunStore("postgresql://nowhere.invalid/none", connect_timeout=1))
+    )
     response = client.get("/api/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok", "core_version": cryptoguard_core.__version__}
