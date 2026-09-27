@@ -247,3 +247,16 @@ def test_contract_values_cannot_be_mutated_after_loading() -> None:
 
 def test_a_date_and_its_iso_string_are_different_values() -> None:
     assert digest_of({"day": date(2024, 12, 31)}) != digest_of({"day": "2024-12-31"})
+
+
+def test_a_miscounted_scored_day_total_is_refused(tmp_path: Path) -> None:
+    """The first version of this contract was wrong by one day and nobody noticed for four files."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        "scored_development_days: 1096", "scored_development_days: 1095"
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+    assert "1096 days" in str(caught.value)

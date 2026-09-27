@@ -33,7 +33,7 @@ splits:
   first_test_quarter: 2022Q1
   last_test_quarter: 2024Q4
   test_quarters: 12
-  scored_development_days: 1095
+  scored_development_days: 1096
   inner_validation_days: 90
   final_holdout_first_day: 2025-01-01
   final_holdout_last_day: 2025-11-30
@@ -71,7 +71,7 @@ preprocessing:
 
 model:
   family: logistic_regression
-  penalty: l2
+  penalty: l2  # expressed as l1_ratio=0 in scikit-learn 1.9
   regularisation_grid: [0.01, 0.1, 1.0]
   regularisation_selected: within_fold_inner_validation
 

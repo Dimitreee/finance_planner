@@ -7,7 +7,7 @@ position transition are the same row, written in one statement.
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -45,6 +45,32 @@ class PublishedRun:
     contract_digest: str
     model_mode: str
     run_bundle_path: str
+
+
+@dataclass(frozen=True, slots=True)
+class PublishedReplay:
+    """One Cost Scenario of a frozen backtest. Never joined to the Paper Track."""
+
+    asset: str
+    arm: str
+    model_version: str
+    cost_scenario: str
+    is_headline: bool
+    window_first_day: date
+    window_last_day: date
+    days: int
+    trades: int
+    net_return: float
+    buy_and_hold_return: float
+    cash_return: float
+    max_drawdown: float
+    turnover: float
+    time_invested: float
+    total_fees: float
+    selection_metric: str
+    selection_score: float
+    contract_digest: str
+    model_mode: str = "replay"
 
 
 class RunStore:
@@ -207,6 +233,62 @@ class RunStore:
             (day, action, float(btc), float(usdt), float(price))
             for day, action, btc, usdt, price in rows
         ]
+
+    def publish_replay(self, replays: Sequence[PublishedReplay]) -> int:
+        """Write a frozen backtest. Already-published scenarios are left alone."""
+        written = 0
+        with self._connect() as connection:
+            for replay in replays:
+                row = connection.execute(
+                    "INSERT INTO published_replays ("
+                    " asset, arm, model_version, cost_scenario, is_headline, window_first_day,"
+                    " window_last_day, days, trades, net_return, buy_and_hold_return, cash_return,"
+                    " max_drawdown, turnover, time_invested, total_fees, selection_metric,"
+                    " selection_score, contract_digest, model_mode"
+                    ") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,"
+                    " %s, %s, %s) ON CONFLICT DO NOTHING RETURNING id",
+                    (
+                        replay.asset,
+                        replay.arm,
+                        replay.model_version,
+                        replay.cost_scenario,
+                        replay.is_headline,
+                        replay.window_first_day,
+                        replay.window_last_day,
+                        replay.days,
+                        replay.trades,
+                        replay.net_return,
+                        replay.buy_and_hold_return,
+                        replay.cash_return,
+                        replay.max_drawdown,
+                        replay.turnover,
+                        replay.time_invested,
+                        replay.total_fees,
+                        replay.selection_metric,
+                        replay.selection_score,
+                        replay.contract_digest,
+                        replay.model_mode,
+                    ),
+                ).fetchone()
+                written += row is not None
+            connection.commit()
+        return written
+
+    def latest_replay(self, asset: str) -> tuple[PublishedReplay, ...]:
+        """Every Cost Scenario of the most recently published backtest for this asset."""
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT asset, arm, model_version, cost_scenario, is_headline, window_first_day,"
+                " window_last_day, days, trades, net_return, buy_and_hold_return, cash_return,"
+                " max_drawdown, turnover, time_invested, total_fees, selection_metric,"
+                " selection_score, contract_digest, model_mode FROM published_replays"
+                " WHERE asset = %s AND model_version = ("
+                "   SELECT model_version FROM published_replays WHERE asset = %s"
+                "   ORDER BY published_at DESC, id DESC LIMIT 1)"
+                " ORDER BY is_headline DESC, cost_scenario",
+                (asset, asset),
+            ).fetchall()
+        return tuple(PublishedReplay(*row) for row in rows)
 
     def publish(self, run: PublishedRun) -> bool:
         """Write the run and its position transition. False means this key was already published."""

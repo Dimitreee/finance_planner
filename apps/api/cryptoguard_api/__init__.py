@@ -106,6 +106,46 @@ def create_app(
             ],
         }
 
+    @app.get("/api/replay")
+    def replay() -> dict[str, Any]:
+        scenarios = published.latest_replay(asset)
+        first = scenarios[0] if scenarios else None
+        return {
+            "asset": asset,
+            "arm": first.arm if first else None,
+            "model_version": first.model_version if first else None,
+            "model_mode": first.model_mode if first else None,
+            "window": (
+                {
+                    "first_day": first.window_first_day.isoformat(),
+                    "last_day": first.window_last_day.isoformat(),
+                    "days": first.days,
+                }
+                if first
+                else None
+            ),
+            "selection": (
+                {"metric": first.selection_metric, "score": first.selection_score}
+                if first
+                else None
+            ),
+            "scenarios": [
+                {
+                    "name": scenario.cost_scenario,
+                    "is_headline": scenario.is_headline,
+                    "net_return": scenario.net_return,
+                    "buy_and_hold_return": scenario.buy_and_hold_return,
+                    "cash_return": scenario.cash_return,
+                    "max_drawdown": scenario.max_drawdown,
+                    "turnover": scenario.turnover,
+                    "trades": scenario.trades,
+                    "time_invested": scenario.time_invested,
+                    "total_fees": scenario.total_fees,
+                }
+                for scenario in scenarios
+            ],
+        }
+
     return app
 
 

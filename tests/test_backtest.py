@@ -44,7 +44,7 @@ def job_store() -> RunStore:
         pytest.skip("set CRYPTOGUARD_TEST_DATABASE_URL to compare the backtest against the job")
     try:
         with psycopg.connect(dsn, connect_timeout=3) as connection:
-            connection.execute("DROP TABLE IF EXISTS published_runs, job_runs")
+            connection.execute("DROP TABLE IF EXISTS published_runs, job_runs, published_replays")
             connection.commit()
     except psycopg.OperationalError as error:  # pragma: no cover - environment dependent
         pytest.skip(f"database not reachable: {error}")

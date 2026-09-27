@@ -34,6 +34,29 @@ export interface PaperTrack {
   points: TrackPoint[];
 }
 
+export interface ReplayScenario {
+  name: string;
+  is_headline: boolean;
+  net_return: number;
+  buy_and_hold_return: number;
+  cash_return: number;
+  max_drawdown: number;
+  turnover: number;
+  trades: number;
+  time_invested: number;
+  total_fees: number;
+}
+
+export interface Replay {
+  asset: string;
+  arm: string | null;
+  model_version: string | null;
+  model_mode: string | null;
+  window: { first_day: string; last_day: string; days: number } | null;
+  selection: { metric: string; score: number } | null;
+  scenarios: ReplayScenario[];
+}
+
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(path);
   if (!response.ok) throw new Error(`${path} responded ${response.status}`);
@@ -42,3 +65,4 @@ async function getJson<T>(path: string): Promise<T> {
 
 export const fetchAdvice = () => getJson<Advice>("/api/advice");
 export const fetchPaperTrack = () => getJson<PaperTrack>("/api/paper-track");
+export const fetchReplay = () => getJson<Replay>("/api/replay");

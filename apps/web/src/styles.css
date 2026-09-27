@@ -106,3 +106,12 @@ body {
 
 .notice { padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .notice--bad { background: var(--bad-bg); border-color: transparent; color: var(--bad); }
+
+.scenarios { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.scenarios th, .scenarios td { padding: 0.4rem 0.3rem; text-align: right; border-bottom: 1px solid var(--line); }
+.scenarios thead th { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+.scenarios th[scope="row"] { text-align: left; font-weight: 500; }
+.scenarios__headline { background: var(--page); }
+.scenarios__tag { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+
+.warning { margin: 0.6rem 0 0; padding: 0.7rem 0.8rem; border-radius: 8px; background: var(--warn-bg); color: var(--warn); }

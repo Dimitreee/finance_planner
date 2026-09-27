@@ -18,7 +18,7 @@ import psycopg
 import pytest
 from cryptoguard_api import create_app
 from cryptoguard_core.policy import Position
-from cryptoguard_core.store import PublishedRun, RunStore
+from cryptoguard_core.store import PublishedReplay, PublishedRun, RunStore
 from fastapi.testclient import TestClient
 
 ASSET = "BTCUSDT"
@@ -39,7 +39,7 @@ def store() -> RunStore:
         pytest.skip("set CRYPTOGUARD_TEST_DATABASE_URL to run the API seam against PostgreSQL")
     try:
         with psycopg.connect(dsn, connect_timeout=3) as connection:
-            connection.execute("DROP TABLE IF EXISTS published_runs, job_runs")
+            connection.execute("DROP TABLE IF EXISTS published_runs, job_runs, published_replays")
             connection.commit()
     except psycopg.OperationalError as error:  # pragma: no cover - environment dependent
         pytest.skip(f"database not reachable: {error}")
@@ -173,3 +173,65 @@ def test_importing_the_api_pulls_in_no_model_or_ingestion_transitively() -> None
         [sys.executable, "-c", program], capture_output=True, text=True, check=True
     )
     assert json.loads(result.stdout) == []
+
+
+def publish_replay(store: RunStore, *, version: str = "arm-a-logistic-1.0") -> None:
+    store.publish_replay(
+        [
+            PublishedReplay(
+                asset=ASSET,
+                arm="A",
+                model_version=version,
+                cost_scenario=name,
+                is_headline=name == "base",
+                window_first_day=date(2022, 1, 1),
+                window_last_day=date(2024, 12, 31),
+                days=1096,
+                trades=400,
+                net_return=net,
+                buy_and_hold_return=1.5,
+                cash_return=0.0,
+                max_drawdown=0.4,
+                turnover=120.0,
+                time_invested=0.5,
+                total_fees=90.0,
+                selection_metric="log_loss",
+                selection_score=0.69,
+                contract_digest="deadbeef",
+            )
+            for name, net in (("optimistic", 0.2), ("base", -0.1), ("pessimistic", -0.6))
+        ]
+    )
+
+
+def test_no_replay_published_yet_is_reported_as_empty(store: RunStore) -> None:
+    body = client(store, date(2026, 9, 28)).get("/api/replay").json()
+    assert body["scenarios"] == []
+    assert body["model_version"] is None
+
+
+def test_the_replay_is_served_with_every_scenario_and_the_headline_first(store: RunStore) -> None:
+    publish_replay(store)
+    body = client(store, date(2026, 9, 28)).get("/api/replay").json()
+    assert body["model_mode"] == "replay"
+    assert body["arm"] == "A"
+    assert body["window"] == {"first_day": "2022-01-01", "last_day": "2024-12-31", "days": 1096}
+    assert body["selection"] == {"metric": "log_loss", "score": 0.69}
+    assert [s["name"] for s in body["scenarios"]] == ["base", "optimistic", "pessimistic"]
+    assert body["scenarios"][0]["is_headline"] is True
+    assert body["scenarios"][0]["cash_return"] == 0.0
+
+
+def test_publishing_the_same_replay_twice_writes_it_once(store: RunStore) -> None:
+    publish_replay(store)
+    publish_replay(store)
+    body = client(store, date(2026, 9, 28)).get("/api/replay").json()
+    assert len(body["scenarios"]) == 3
+
+
+def test_a_newer_model_version_replaces_the_replay_shown(store: RunStore) -> None:
+    publish_replay(store, version="arm-a-logistic-1.0")
+    publish_replay(store, version="arm-a-logistic-2.0")
+    body = client(store, date(2026, 9, 28)).get("/api/replay").json()
+    assert body["model_version"] == "arm-a-logistic-2.0"
+    assert len(body["scenarios"]) == 3

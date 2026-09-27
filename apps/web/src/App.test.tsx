@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
-import { advice, track } from "./fixtures";
+import { advice, replay, track } from "./fixtures";
 
 afterEach(() => {
   vi.useRealTimers();
@@ -14,7 +14,11 @@ function stubApi(): () => number {
     "fetch",
     vi.fn(async (url: string) => {
       calls += 1;
-      const body = url.includes("paper-track") ? track() : advice();
+      const body = url.includes("paper-track")
+        ? track()
+        : url.includes("replay")
+          ? replay()
+          : advice();
       return { ok: true, json: async () => body } as Response;
     }),
   );
@@ -35,11 +39,42 @@ describe("the page", () => {
     expect(calls()).toBeGreaterThan(before);
   });
 
+  it("keeps the page alive when only the evaluation is unavailable", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (url.includes("replay")) return { ok: false, status: 500 } as Response;
+        const body = url.includes("paper-track") ? track() : advice();
+        return { ok: true, json: async () => body } as Response;
+      }),
+    );
+    render(<App />);
+    await waitFor(() => expect(screen.getByText("Buy BTC")).toBeInTheDocument());
+    expect(screen.getByText(/No evaluation has been published yet/i)).toBeInTheDocument();
+  });
+
   it("says a failure to reach the service is not a view about the market", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 503 }) as Response));
     render(<App />);
     await waitFor(() =>
       expect(screen.getByText(/not a view about the market/i)).toBeInTheDocument(),
     );
+  });
+});
+
+
+describe("the panels", () => {
+  it("keeps the track since launch and the history evaluation apart", async () => {
+    stubApi();
+    render(<App />);
+    await waitFor(() => expect(screen.getByText("Buy BTC")).toBeInTheDocument());
+
+    // Two separate sections, and only one series is drawn: joining them would turn a backtest
+    // into something a reader takes for earnings.
+    expect(screen.getByRole("region", { name: /since launch/i })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: /evaluated on history/i })).toBeInTheDocument();
+    expect(screen.getAllByTestId("price-chart")).toHaveLength(1);
+    const evaluation = screen.getByRole("region", { name: /evaluated on history/i });
+    expect(evaluation.querySelector("svg")).toBeNull();
   });
 });

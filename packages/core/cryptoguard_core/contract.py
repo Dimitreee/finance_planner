@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date
@@ -127,6 +128,19 @@ class DatasetManifest:
     source_digests: Mapping[str, str]
 
 
+_QUARTER_LABEL = re.compile(r"^(\d{4})Q([1-4])$")
+
+
+def _quarter_start(label: object) -> date:
+    """`2022Q1` to the first day of that quarter, refusing anything else by name."""
+    match = _QUARTER_LABEL.match(label) if isinstance(label, str) else None
+    if match is None:
+        _refuse(f"{label!r} is not a quarter label such as '2022Q1'")
+        raise AssertionError("unreachable")  # _refuse always raises
+    year, quarter = int(match.group(1)), int(match.group(2))
+    return date(year, 3 * (quarter - 1) + 1, 1)
+
+
 def _refuse(detail: str) -> None:
     raise FatalDefect("contract_inconsistent", detail)
 
@@ -177,6 +191,15 @@ def _check(values: Mapping[str, Any]) -> None:
     splits = values["splits"]
     if splits["final_holdout_first_day"] <= splits["development_last_day"]:
         _refuse("the Final Holdout must start after the Development Period ends")
+    # Counted, not asserted. The first version of this contract carried a number that was simply
+    # wrong by one day and was repeated into four documents before anyone did the arithmetic.
+    first_scored = _quarter_start(splits["first_test_quarter"])
+    scored = (splits["development_last_day"] - first_scored).days + 1
+    if splits["scored_development_days"] != scored:
+        _refuse(
+            f"splits.scored_development_days is {splits['scored_development_days']}, but "
+            f"{first_scored} to {splits['development_last_day']} is {scored} days"
+        )
 
     costs = values["cost_scenarios"]
     headline = costs["headline"]

@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
-import type { Advice, PaperTrack } from "./api";
-import { fetchAdvice, fetchPaperTrack } from "./api";
+import type { Advice, PaperTrack, Replay } from "./api";
+import { fetchAdvice, fetchPaperTrack, fetchReplay } from "./api";
 import { AdvicePanel } from "./components/AdvicePanel";
 import { PaperTrackPanel } from "./components/PaperTrackPanel";
+import { ReplayPanel } from "./components/ReplayPanel";
 
 const REFRESH_MS = 60_000;
+
+const EMPTY_REPLAY: Replay = {
+  asset: "",
+  arm: null,
+  model_version: null,
+  model_mode: null,
+  window: null,
+  selection: null,
+  scenarios: [],
+};
 
 type State =
   | { status: "loading" }
   | { status: "failed"; detail: string }
-  | { status: "ready"; advice: Advice; track: PaperTrack };
+  | { status: "ready"; advice: Advice; track: PaperTrack; replay: Replay };
 
 export function App() {
   const [state, setState] = useState<State>({ status: "loading" });
@@ -17,8 +28,17 @@ export function App() {
   useEffect(() => {
     let live = true;
     const load = () =>
-      Promise.all([fetchAdvice(), fetchPaperTrack()])
-        .then(([advice, track]) => live && setState({ status: "ready", advice, track }))
+      Promise.all([
+        fetchAdvice(),
+        fetchPaperTrack(),
+        // The evaluation is the newest surface and the first to exist on a fresh deployment. Losing
+        // it must not cost the reader today's advice as well.
+        fetchReplay().catch(() => EMPTY_REPLAY),
+      ])
+        .then(
+          ([advice, track, replay]) =>
+            live && setState({ status: "ready", advice, track, replay }),
+        )
         .catch((error: unknown) =>
           live ? setState({ status: "failed", detail: String(error) }) : undefined,
         );
@@ -55,6 +75,7 @@ export function App() {
         <>
           <AdvicePanel advice={state.advice} />
           <PaperTrackPanel track={state.track} />
+          <ReplayPanel replay={state.replay} />
         </>
       )}
     </main>

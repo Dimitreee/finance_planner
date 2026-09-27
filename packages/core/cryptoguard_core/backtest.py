@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from datetime import date
 from types import MappingProxyType
 
 from cryptoguard_core.dataset import ARM_A_FEATURES, DecisionDayRow
@@ -89,7 +90,14 @@ def run_backtest(
     *,
     initial: Position,
     arm: str = DEFAULT_ARM,
+    probabilities: Mapping[date, float] | None = None,
 ) -> BacktestResult:
+    """`probabilities` replays recorded out-of-sample predictions instead of calling the model.
+
+    A walk-forward produces one prediction per day from the fold that could not see it. Re-running
+    the model over the same days would score it in-sample, which is a different and flattering
+    question.
+    """
     if not rows:
         raise FatalDefect("missing_decision_day_row", "a backtest needs at least one Decision Day")
 
@@ -121,7 +129,15 @@ def run_backtest(
     invested_days = 0
 
     for row in rows:
-        probability = model.predict(row.features)
+        if probabilities is None:
+            probability = model.predict(row.features)
+        elif row.day in probabilities:
+            probability = probabilities[row.day]
+        else:
+            raise FatalDefect(
+                "missing_decision_day_row",
+                f"no recorded prediction for {row.day}; a replay may not fall back to the model",
+            )
         trace = decide_target_exposure(
             probability,
             current_exposure=position.exposure(row.decision_price),
@@ -167,10 +183,13 @@ def run_cost_sensitivity(
     *,
     initial: Position,
     arm: str = DEFAULT_ARM,
+    probabilities: Mapping[date, float] | None = None,
 ) -> CostSensitivity:
     """Run every scenario. The base one is the headline; the others say whether it survives."""
     results = {
-        name: run_backtest(rows, model, policy, scenario, initial=initial, arm=arm)
+        name: run_backtest(
+            rows, model, policy, scenario, initial=initial, arm=arm, probabilities=probabilities
+        )
         for name, scenario in COST_SCENARIOS.items()
     }
     beats_buy_and_hold = {

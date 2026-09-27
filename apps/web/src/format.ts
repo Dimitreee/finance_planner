@@ -116,3 +116,13 @@ export function formatBtc(value: number): string {
 export function formatProbability(value: number): string {
   return value.toLocaleString("en-GB", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
 }
+
+
+export function formatReturn(value: number): string {
+  // `-0 >= 0` is true and `(-0 * 100).toLocaleString()` is "-0.0", which would render "+-0.0%".
+  const normalised = value === 0 ? 0 : value;
+  return `${normalised >= 0 ? "+" : ""}${(normalised * 100).toLocaleString("en-GB", {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1,
+  })}%`;
+}

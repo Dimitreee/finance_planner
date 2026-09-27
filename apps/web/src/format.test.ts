@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { formatDay, freshnessNote, headline, horizonSentence, meaningSentence } from "./format";
+import {
+  formatDay,
+  formatReturn,
+  freshnessNote,
+  headline,
+  horizonSentence,
+  meaningSentence,
+} from "./format";
 import { advice } from "./fixtures";
 
 describe("wording", () => {
@@ -26,6 +33,12 @@ describe("wording", () => {
 
   it("formats a day in UTC regardless of the reader's timezone", () => {
     expect(formatDay("2026-01-01")).toBe("1 January 2026");
+  });
+
+  it("renders a zero return without a sign clash", () => {
+    expect(formatReturn(0)).toBe("+0.0%");
+    expect(formatReturn(-0)).toBe("+0.0%");
+    expect(formatReturn(-0.25)).toBe("-25.0%");
   });
 
   it("returns a malformed date unchanged rather than rendering 'Invalid Date'", () => {

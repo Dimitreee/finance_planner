@@ -2,7 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { AdvicePanel } from "./components/AdvicePanel";
 import { PaperTrackPanel } from "./components/PaperTrackPanel";
-import { advice, track } from "./fixtures";
+import { ReplayPanel } from "./components/ReplayPanel";
+import { advice, replay, track } from "./fixtures";
 
 const pageText = () => document.body.textContent ?? "";
 
@@ -99,5 +100,45 @@ describe("the paper track panel", () => {
     render(<PaperTrackPanel track={track({ genesis_day: null, points: [] })} />);
     expect(screen.queryByTestId("price-chart")).not.toBeInTheDocument();
     expect(pageText()).toMatch(/nothing to draw/i);
+  });
+});
+
+
+describe("the history evaluation panel", () => {
+  it("names each cost scenario and compares against cash and buy-and-hold", () => {
+    render(<ReplayPanel replay={replay()} />);
+    for (const name of ["base", "optimistic", "pessimistic"]) {
+      expect(screen.getByText(new RegExp(`^${name}$`))).toBeInTheDocument();
+    }
+    expect(screen.getByText("Buy & hold")).toBeInTheDocument();
+    expect(screen.getByText("Cash")).toBeInTheDocument();
+    expect(pageText()).toMatch(/\+150\.0%/);
+  });
+
+  it("marks the headline scenario", () => {
+    render(<ReplayPanel replay={replay()} />);
+    expect(pageText()).toMatch(/headline/);
+  });
+
+  it("says these are results on past data, not money earned", () => {
+    render(<ReplayPanel replay={replay()} />);
+    expect(pageText()).toMatch(/results on past data, not money earned/i);
+    expect(pageText()).toMatch(/kept apart from the track since launch/i);
+  });
+
+  it("says the forecast has no skill when log loss is no better than answering 0.50", () => {
+    render(<ReplayPanel replay={replay({ selection: { metric: "log_loss", score: 0.6944 } })} />);
+    expect(pageText()).toMatch(/shows no skill/i);
+    expect(pageText()).toMatch(/not from predicting anything/i);
+  });
+
+  it("does not cry no-skill when the forecast beats that reference", () => {
+    render(<ReplayPanel replay={replay({ selection: { metric: "log_loss", score: 0.66 } })} />);
+    expect(pageText()).not.toMatch(/shows no skill/i);
+  });
+
+  it("says so plainly when no evaluation has been published", () => {
+    render(<ReplayPanel replay={replay({ window: null, scenarios: [] })} />);
+    expect(pageText()).toMatch(/No evaluation has been published yet/i);
   });
 });
