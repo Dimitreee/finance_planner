@@ -8,7 +8,16 @@ University of London BSc Computer Science final project, Project Idea 4.2 (Finan
 
 ## Getting started
 
-One command, from a clean checkout:
+```sh
+make setup   # uv sync, then npm install
+make help    # every other target, with one line each
+```
+
+`make check` is the one to run before committing: lint, both type checkers, both test suites.
+
+The sections below explain what the targets do; the Makefile is the short version.
+
+`make setup-python` alone is enough for everything except the page:
 
 ```sh
 uv sync
@@ -53,7 +62,9 @@ CRYPTOGUARD_TEST_DATABASE_URL=postgresql://cryptoguard:cryptoguard@localhost:543
 ```
 
 They **drop and recreate** their tables, so give them a database of their own. Without that variable
-they skip, and the rest of the suite runs with no database at all.
+they skip, and the rest of the suite runs with no database at all. `make test` refuses to run when
+`CRYPTOGUARD_TEST_DATABASE_URL` names the same database as `CRYPTOGUARD_DATABASE_URL`, because that
+mistake destroys published runs.
 
 ## The read API
 
