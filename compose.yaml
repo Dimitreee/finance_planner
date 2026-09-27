@@ -1,0 +1,29 @@
+# PostgreSQL for local work. Nothing else is containerised: the job, the training and the tests run
+# natively through uv, because training on this machine uses MPS and Docker on macOS does not offer
+# it. Bring it up with:
+#
+#   docker compose up -d db
+#
+# and point the job at it with
+# CRYPTOGUARD_DATABASE_URL=postgresql://cryptoguard:cryptoguard@localhost:5432/cryptoguard
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: cryptoguard
+      POSTGRES_PASSWORD: cryptoguard
+      POSTGRES_DB: cryptoguard
+    ports:
+      - "5432:5432"
+    volumes:
+      # Named volume so published runs survive a restart of the container.
+      - cryptoguard_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cryptoguard -d cryptoguard"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  cryptoguard_pgdata:

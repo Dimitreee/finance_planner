@@ -50,7 +50,8 @@ class DecisionDayRow:
     feature_cutoff_ms: int
     anchor_price: float
     decision_price: float
-    label: int
+    # None when the outcome is not yet knowable. A decision needs no Label; only a fit does.
+    label: int | None
     label_end_ms: int
     bars_in_day: int
     features: Mapping[str, float]
@@ -84,6 +85,9 @@ class _Series:
     @property
     def first_time_ms(self) -> int | None:
         return self._times[0] if self._times else None
+
+    def at(self, open_time_ms: int) -> Bar | None:
+        return self._by_time.get(open_time_ms)
 
     def require_bar(self, open_time_ms: int, context: str) -> Bar:
         """The bar opening exactly then, distinguishing absent from present-but-misaligned."""
@@ -192,12 +196,18 @@ def build_decision_day_rows(
     bars: Sequence[Bar],
     first_day: date = RESEARCH_WINDOW_FIRST_DAY,
     last_day: date = RESEARCH_WINDOW_LAST_DAY,
+    *,
+    require_label: bool = True,
 ) -> tuple[DecisionDayRow, ...]:
     """Build one row per Decision Day in [first_day, last_day].
 
     Trailing features read the Warm-Up Buffer, the 30 days before `first_day`; the buffer is never
     scored, fitted on or reported. The build fails if the bars do not reach back that far, because a
     window that quietly starts late would report a different market than the one it names.
+
+    `require_label` is what separates a row built for a fit from a row built for a decision. A fit
+    needs the outcome, so a missing next-day bar is fatal. A decision does not: today's advice is
+    owed at 00:10 today, long before tomorrow's Decision Price exists.
     """
     series = _Series(bars)
     first_cutoff = _midnight_ms(first_day)
@@ -220,11 +230,15 @@ def build_decision_day_rows(
             cutoff + HOUR_MS,
             f"the 01:00 UTC bar of {day.isoformat()}, which carries its Decision Price",
         )
-        next_decision_bar = series.require_bar(
-            next_cutoff + HOUR_MS,
-            f"the 01:00 UTC bar of {(day + timedelta(days=1)).isoformat()}, "
-            f"which resolves the Label of {day.isoformat()}",
-        )
+        next_decision_bar: Bar | None
+        if require_label:
+            next_decision_bar = series.require_bar(
+                next_cutoff + HOUR_MS,
+                f"the 01:00 UTC bar of {(day + timedelta(days=1)).isoformat()}, "
+                f"which resolves the Label of {day.isoformat()}",
+            )
+        else:
+            next_decision_bar = series.at(next_cutoff + HOUR_MS)
 
         anchor = series.anchor_closed_by(cutoff)
         rows.append(
@@ -233,7 +247,11 @@ def build_decision_day_rows(
                 feature_cutoff_ms=cutoff,
                 anchor_price=anchor,
                 decision_price=decision_bar.open,
-                label=int(next_decision_bar.open > decision_bar.open),
+                label=(
+                    None
+                    if next_decision_bar is None
+                    else int(next_decision_bar.open > decision_bar.open)
+                ),
                 label_end_ms=next_cutoff + HOUR_MS,
                 bars_in_day=series.count_in_day(cutoff),
                 features=_features(series, cutoff, anchor),

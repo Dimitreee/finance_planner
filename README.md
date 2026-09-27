@@ -29,6 +29,32 @@ uv run mypy            # type check
 uv run cryptoguard-job # batch job entry point
 ```
 
+## The database
+
+Published runs live in PostgreSQL. Nothing else is containerised: the job, the training and the tests
+run natively through uv, because training on this machine uses MPS and Docker on macOS does not offer
+it.
+
+```sh
+docker compose up -d db
+export CRYPTOGUARD_DATABASE_URL=postgresql://cryptoguard:cryptoguard@localhost:5432/cryptoguard
+uv run cryptoguard-job decide --day 2021-02-01
+```
+
+The job creates its own schema on first run and is idempotent: running the same Decision Day twice
+publishes once, and the second run books no second trade. A named volume keeps published runs across
+a restart of the container.
+
+To run the job-seam tests against a database, point them at one:
+
+```sh
+CRYPTOGUARD_TEST_DATABASE_URL=postgresql://cryptoguard:cryptoguard@localhost:5432/cryptoguard \
+  uv run pytest tests/test_decide_job.py
+```
+
+They **drop and recreate** their tables, so give them a database of their own. Without that variable
+they skip, and the rest of the suite runs with no database at all.
+
 ## Layout
 
 | Path             | What lives there                                                        |

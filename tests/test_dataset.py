@@ -250,3 +250,18 @@ def test_duplicate_bars_are_rejected_by_the_builder() -> None:
     with pytest.raises(FatalDefect) as caught:
         build_decision_day_rows([*bars, bars[CUTOFF_INDEX + 1]], FIRST_DAY, FIRST_DAY)
     assert caught.value.kind == "duplicate_open_time"
+
+
+def test_a_decision_may_be_built_without_a_resolvable_label() -> None:
+    """Today's advice is owed at 00:10 today, long before tomorrow's Decision Price exists."""
+    bars = hourly_series(SERIES_START, 31 * 24, quote=RISING)  # ends 2021-02-01T23:00
+    rows = build_decision_day_rows(bars, FIRST_DAY, FIRST_DAY, require_label=False)
+    assert len(rows) == 1
+    assert rows[0].decision_price > 0
+    assert rows[0].label is None
+
+
+def test_a_fit_still_refuses_a_row_whose_outcome_is_unknown() -> None:
+    bars = hourly_series(SERIES_START, 31 * 24, quote=RISING)
+    with pytest.raises(FatalDefect):
+        build_decision_day_rows(bars, FIRST_DAY, FIRST_DAY, require_label=True)
