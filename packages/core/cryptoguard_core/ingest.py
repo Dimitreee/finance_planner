@@ -50,6 +50,8 @@ FatalKind = Literal[
     "warm_up_underrun",
     "stale_anchor",
     "degenerate_window",
+    "news_timestamp_format",
+    "mixed_timezone_offsets",
 ]
 FlagKind = Literal["unaligned_open_time", "bar_duration", "short_day"]
 

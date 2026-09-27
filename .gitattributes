@@ -1,0 +1,3 @@
+# Test fixtures are byte-for-byte slices of real source files. The news archive uses CRLF, so any
+# end-of-line normalisation would silently change a fixture between checkouts.
+tests/fixtures/** -text
