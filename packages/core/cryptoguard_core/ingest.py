@@ -60,6 +60,8 @@ FatalKind = Literal[
     "arm_feature_mismatch",
     "rows_out_of_order",
     "insufficient_training_rows",
+    "unknown_interval",
+    "rest_response_truncated",
     "trial_budget_exhausted",
     "unknown_trial",
     "unknown_release",
@@ -127,6 +129,53 @@ def _instant(open_time_ms: int) -> str:
     return datetime.fromtimestamp(open_time_ms / 1000, tz=UTC).isoformat()
 
 
+def bar_from_row(row: Sequence[str], source: str) -> Bar:
+    """One Binance kline row to a Bar, with every Fatal Defect check applied.
+
+    Shared by the archive reader and the REST reader so that a bar arriving over HTTP is validated
+    exactly as one arriving from a checksum-verified file.
+    """
+    if len(row) != COLUMNS:
+        raise FatalDefect(
+            "column_count", f"{source}: row has {len(row)} columns, expected {COLUMNS}"
+        )
+
+    open_time_ms = _to_milliseconds(row[0], source)
+    try:
+        open_, high, low, close = (float(row[1]), float(row[2]), float(row[3]), float(row[4]))
+        volume = float(row[5])
+        close_time_ms = _to_milliseconds(row[6], source)
+    except ValueError as error:
+        raise FatalDefect(
+            "numeric_field",
+            f"{source}: non-numeric field in the row opening at {_instant(open_time_ms)}: {error}",
+        ) from error
+
+    if min(open_, high, low, close) <= 0:
+        raise FatalDefect(
+            "non_positive_price",
+            f"{source}: non-positive price at {_instant(open_time_ms)} "
+            f"(o={open_} h={high} l={low} c={close}); zero volume is real data, "
+            "zero price is not",
+        )
+    if not (low <= min(open_, close) and max(open_, close) <= high and low <= high):
+        raise FatalDefect(
+            "ohlc_invariant",
+            f"{source}: OHLC invariant violated at {_instant(open_time_ms)} "
+            f"(o={open_} h={high} l={low} c={close})",
+        )
+    return Bar(
+        open_time_ms=open_time_ms,
+        open=open_,
+        high=high,
+        low=low,
+        close=close,
+        volume=volume,
+        close_time_ms=close_time_ms,
+        source=source,
+    )
+
+
 def _parse_archive(archive: Path) -> list[Bar]:
     with zipfile.ZipFile(archive) as zf:
         members = [name for name in zf.namelist() if name.lower().endswith(".csv")]
@@ -141,47 +190,7 @@ def _parse_archive(archive: Path) -> list[Bar]:
     for row in csv.reader(io.StringIO(text)):
         if not row:  # a trailing newline is a formatting artifact, not a row
             continue
-        if len(row) != COLUMNS:
-            raise FatalDefect(
-                "column_count",
-                f"{archive.name}: row has {len(row)} columns, expected {COLUMNS}",
-            )
-        open_time_ms = _to_milliseconds(row[0], archive.name)
-        try:
-            open_, high, low, close = (float(row[1]), float(row[2]), float(row[3]), float(row[4]))
-            volume = float(row[5])
-            close_time_ms = _to_milliseconds(row[6], archive.name)
-        except ValueError as error:
-            raise FatalDefect(
-                "numeric_field",
-                f"{archive.name}: non-numeric field in the row opening at "
-                f"{_instant(open_time_ms)}: {error}",
-            ) from error
-        if min(open_, high, low, close) <= 0:
-            raise FatalDefect(
-                "non_positive_price",
-                f"{archive.name}: non-positive price at {_instant(open_time_ms)} "
-                f"(o={open_} h={high} l={low} c={close}); zero volume is real data, "
-                "zero price is not",
-            )
-        if not (low <= min(open_, close) and max(open_, close) <= high and low <= high):
-            raise FatalDefect(
-                "ohlc_invariant",
-                f"{archive.name}: OHLC invariant violated at {_instant(open_time_ms)} "
-                f"(o={open_} h={high} l={low} c={close})",
-            )
-        bars.append(
-            Bar(
-                open_time_ms=open_time_ms,
-                open=open_,
-                high=high,
-                low=low,
-                close=close,
-                volume=volume,
-                close_time_ms=close_time_ms,
-                source=archive.name,
-            )
-        )
+        bars.append(bar_from_row(row, archive.name))
     return bars
 
 
