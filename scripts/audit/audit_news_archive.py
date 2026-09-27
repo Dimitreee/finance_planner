@@ -61,6 +61,10 @@ def main() -> int:
         status = "MATCH" if actual == expected else "MISMATCH"
         print(f"{path.name:44} sha256 {status}: {actual}")
 
+    if not NEWS_CSV.is_file():
+        print(f"\n{NEWS_CSV} is absent; run scripts/fetch_news_archive.sh first")
+        return 1
+
     items = list(read_news_items(NEWS_CSV))
     btc = [item for item in items if mentions_asset(item, "BTC")]
     print(f"\nrecords                 : {len(items)}")

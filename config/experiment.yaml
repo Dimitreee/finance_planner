@@ -1,0 +1,109 @@
+# Experiment Contract — CryptoGuard
+#
+# Every experimental choice, frozen before the first fit. A choice absent from this file at fit time
+# is not pre-registered, whatever a document claims afterwards. The digest of this file's *values*
+# is recorded in the manifest of every dataset and every run built under it, so a silent edit cannot
+# pass as the same pre-registration.
+#
+# Decisions behind these values live in docs/adr/0001 and 0004-0009; measurements behind the
+# Primary Lag live in reports/data_audit_news.md.
+
+version: 1
+
+decision_protocol:
+  timezone: UTC
+  feature_cutoff: "00:00"
+  decision_deadline: "00:10"
+  execution: "01:00"
+  feature_anchor_price: close_of_last_bar_closed_by_the_cutoff
+  decision_price: open_of_the_01_00_bar
+  label_rule: next_decision_price_strictly_greater
+  horizon_days: 1
+
+research_window:
+  first_day: 2021-02-01
+  last_day: 2025-11-30
+  decision_days: 1764
+  warm_up_days: 30
+
+splits:
+  development_last_day: 2024-12-31
+  walk_forward: expanding
+  refit: quarterly
+  first_test_quarter: 2022Q1
+  last_test_quarter: 2024Q4
+  test_quarters: 12
+  scored_development_days: 1095
+  inner_validation_days: 90
+  final_holdout_first_day: 2025-01-01
+  final_holdout_last_day: 2025-11-30
+  final_holdout_evaluations_allowed: 1
+
+features:
+  arm_a:
+    - r_1
+    - r_3
+    - r_7
+    - r_14
+    - rv_7
+    - rv_7_over_30
+    - volume_7_over_30
+  arm_b_extra:
+    - news_count_24h_log1p
+    - news_count_24h_over_7d_mean
+  arm_c_extra:
+    - sentiment_mean_24h
+    - sentiment_mean_7d
+
+news:
+  lag_grid_hours: [1, 6, 24]
+  primary_lag_hours: 24
+  # Measured, not assumed: the busiest eight consecutive hours start at 09:00, one hour outside the
+  # pre-registered 10:00-16:00 band, so the rule gives 24. The margin is 1.10%; see the audit.
+  sentiment_when_absent: median_within_fold
+  missingness_indicator: false
+  votes_and_comments_as_features: false
+
+preprocessing:
+  fitted: within_fold
+  imputation: median_within_fold
+  scaling: standardise_within_fold
+
+model:
+  family: logistic_regression
+  penalty: l2
+  regularisation_grid: [0.01, 0.1, 1.0]
+  regularisation_selected: within_fold_inner_validation
+
+evaluation:
+  selection_metric: log_loss
+  headline_metric: net_cumulative_return_after_costs
+  primary_comparison: arm_c_vs_arm_a
+  secondary_forecast_metrics: [brier, accuracy, calibration_curve]
+  secondary_decision_metrics: [max_drawdown, turnover, trades, time_invested]
+  bootstrap_kind: moving_block
+  bootstrap_block_days: 20
+  bootstrap_sensitivity_block_days: [5, 40]
+
+trials:
+  budget: 12
+  planned: 7
+
+policy:
+  to_btc_at: 0.55
+  to_usdt_at: 0.45
+  target_exposure_values: [0, 1]
+  initial_capital_usdt: 1000
+  initial_position: usdt
+
+cost_scenarios:
+  headline: base
+  optimistic:
+    fee_pct: 0.075
+    slippage_bps: 1
+  base:
+    fee_pct: 0.10
+    slippage_bps: 5
+  pessimistic:
+    fee_pct: 0.20
+    slippage_bps: 20
