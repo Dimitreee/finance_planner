@@ -56,6 +56,9 @@ FatalKind = Literal[
     "contract_mismatch",
     "source_digest_mismatch",
     "missing_decision_day_row",
+    "unknown_arm",
+    "arm_feature_mismatch",
+    "rows_out_of_order",
 ]
 FlagKind = Literal["unaligned_open_time", "bar_duration", "short_day"]
 

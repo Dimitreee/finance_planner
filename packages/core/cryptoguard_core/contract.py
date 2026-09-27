@@ -27,6 +27,7 @@ from cryptoguard_core.dataset import (
     WARM_UP_DAYS,
 )
 from cryptoguard_core.ingest import FatalDefect
+from cryptoguard_core.policy import COST_SCENARIOS, HEADLINE_SCENARIO
 from cryptoguard_core.protocol import (
     DECISION_DEADLINE_UTC,
     EXECUTION_UTC,
@@ -181,6 +182,22 @@ def _check(values: Mapping[str, Any]) -> None:
     headline = costs["headline"]
     if headline not in costs or not isinstance(costs[headline], Mapping):
         _refuse(f"cost_scenarios.headline {headline!r} does not name a scenario")
+    if headline != HEADLINE_SCENARIO:
+        _refuse(
+            f"cost_scenarios.headline is {headline!r}, but the code states {HEADLINE_SCENARIO!r}"
+        )
+    for name, scenario in COST_SCENARIOS.items():
+        stated = costs.get(name)
+        if stated is None:
+            _refuse(f"cost_scenarios is missing {name!r}")
+        elif (stated["fee_pct"], stated["slippage_bps"]) != (
+            scenario.fee_pct,
+            scenario.slippage_bps,
+        ):
+            _refuse(
+                f"cost_scenarios.{name} is {stated['fee_pct']}% + {stated['slippage_bps']} bp, "
+                f"but the code states {scenario.fee_pct}% + {scenario.slippage_bps} bp"
+            )
 
 
 def _validate(values: Any) -> None:

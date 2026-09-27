@@ -56,6 +56,16 @@ class CostScenario:
         return self.slippage_bps * _BPS
 
 
+# The three points of the sensitivity band, per ADR-0009. They live beside CostScenario so that the
+# contract loader can check the contract against them and the two cannot drift.
+COST_SCENARIOS: dict[str, CostScenario] = {
+    "optimistic": CostScenario(name="optimistic", fee_pct=0.075, slippage_bps=1),
+    "base": CostScenario(name="base", fee_pct=0.10, slippage_bps=5),
+    "pessimistic": CostScenario(name="pessimistic", fee_pct=0.20, slippage_bps=20),
+}
+HEADLINE_SCENARIO = "base"
+
+
 @dataclass(frozen=True, slots=True)
 class RuleTrace:
     """Everything the Policy looked at, and nothing else."""
