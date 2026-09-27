@@ -2,19 +2,30 @@
 
 Reports only what is measured. Production ingest will be rewritten under test.
 """
+
 import csv
 import hashlib
 import io
 import zipfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 RAW = Path("/Users/barrylarge/Study/finalproject/data/raw/binance/klines/BTCUSDT/1h")
 HOUR_MS = 3_600_000
 
 COLS = [
-    "open_time", "open", "high", "low", "close", "volume", "close_time",
-    "quote_volume", "trades", "taker_base", "taker_quote", "ignore",
+    "open_time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "close_time",
+    "quote_volume",
+    "trades",
+    "taker_base",
+    "taker_quote",
+    "ignore",
 ]
 
 
@@ -37,8 +48,14 @@ def detect_unit(open_time_raw):
 
 
 report = {
-    "files": 0, "checksum_ok": 0, "checksum_bad": [], "header_rows": [],
-    "rows": 0, "bad_width": [], "empty_cells": [], "units": {},
+    "files": 0,
+    "checksum_ok": 0,
+    "checksum_bad": [],
+    "header_rows": [],
+    "rows": 0,
+    "bad_width": [],
+    "empty_cells": [],
+    "units": {},
 }
 rows = []  # (open_time_ms, close_time_ms, o, h, l, c, source)
 
@@ -73,7 +90,9 @@ for zpath in sorted(RAW.glob("*.zip")):
         report["units"].setdefault(unit, []).append(zpath.name)
         ot = int(rec[0]) // mult
         ct = int(rec[6]) // mult
-        rows.append((ot, ct, float(rec[1]), float(rec[2]), float(rec[3]), float(rec[4]), zpath.name))
+        rows.append(
+            (ot, ct, float(rec[1]), float(rec[2]), float(rec[3]), float(rec[4]), zpath.name)
+        )
         report["rows"] += 1
 
 rows.sort(key=lambda r: r[0])
@@ -83,24 +102,30 @@ dupes = []
 gaps = []
 ohlc_bad = []
 seen = {}
-for i, (ot, ct, o, h, l, c, src) in enumerate(rows):
+for i, (ot, _ct, o, high, low, c, src) in enumerate(rows):
     if ot in seen:
         dupes.append((ot, seen[ot], src))
     seen[ot] = src
-    if not (l <= min(o, c) and max(o, c) <= h and l <= h):
-        ohlc_bad.append((ot, src, o, h, l, c))
+    if not (low <= min(o, c) and max(o, c) <= high and low <= high):
+        ohlc_bad.append((ot, src, o, high, low, c))
     if i:
         prev = rows[i - 1][0]
         if ot != prev + HOUR_MS and ot != prev:
             gaps.append((prev, ot, (ot - prev) // HOUR_MS - 1, src))
 
+
 def iso(ms):
-    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).isoformat()
+    return datetime.fromtimestamp(ms / 1000, tz=UTC).isoformat()
+
 
 print(f"archives            : {report['files']}")
 print(f"checksum verified   : {report['checksum_ok']}")
 print(f"checksum FAILED     : {len(report['checksum_bad'])} {report['checksum_bad'][:3]}")
-print(f"header rows skipped : {len(report['header_rows'])} files -> {sorted(set(report['header_rows']))[:4]}{'...' if len(set(report['header_rows']))>4 else ''}")
+header_files = sorted(set(report["header_rows"]))
+header_tail = "..." if len(header_files) > 4 else ""
+print(
+    f"header rows skipped : {len(report['header_rows'])} files -> {header_files[:4]}{header_tail}"
+)
 print(f"data rows           : {report['rows']}")
 print(f"rows with !=12 cols : {len(report['bad_width'])} {report['bad_width'][:3]}")
 print(f"rows with empty cell: {len(report['empty_cells'])} {report['empty_cells'][:3]}")

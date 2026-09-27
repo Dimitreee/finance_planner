@@ -77,3 +77,9 @@ JOURNAL.md
 logs/
 *.pid
 .postgres-data/
+
+# Documentation trail is deliberately untracked (see JOURNAL 2026-09-27)
+CONTEXT.md
+
+# Local markdown issue tracker (see JOURNAL 2026-09-27: documentation stays out of git)
+.scratch/

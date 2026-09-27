@@ -1,6 +1,10 @@
 """Where exactly are the gaps and the misaligned bars, relative to the research window."""
-import csv, io, zipfile
-from datetime import datetime, timezone
+
+import csv
+import io
+import zipfile
+from collections import Counter
+from datetime import UTC, datetime
 from pathlib import Path
 
 RAW = Path("/Users/barrylarge/Study/finalproject/data/raw/binance/klines/BTCUSDT/1h")
@@ -17,8 +21,10 @@ for zpath in sorted(RAW.glob("*.zip")):
             rows.append((int(rec[0]) // mult, int(rec[6]) // mult, zpath.name))
 rows.sort()
 
+
 def iso(ms):
-    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).isoformat().replace("+00:00", "Z")
+    return datetime.fromtimestamp(ms / 1000, tz=UTC).isoformat().replace("+00:00", "Z")
+
 
 # bars whose open_time is not aligned to the hour boundary
 misaligned = [(ot, ct, src) for ot, ct, src in rows if ot % HOUR_MS != 0]
@@ -30,7 +36,7 @@ print()
 odd = [(ot, ct, src) for ot, ct, src in rows if ct - ot not in (HOUR_MS - 1, HOUR_MS)]
 print(f"bars with unusual duration: {len(odd)}")
 for ot, ct, src in odd:
-    print(f"    {iso(ot)} -> {iso(ct)}  duration {(ct-ot)/1000:>10.3f}s  ({src})")
+    print(f"    {iso(ot)} -> {iso(ct)}  duration {(ct - ot) / 1000:>10.3f}s  ({src})")
 
 print()
 for label, cutoff in (("2021-01-01", 1609459200000), ("2024-01-01", 1704067200000)):
@@ -47,11 +53,10 @@ for label, cutoff in (("2021-01-01", 1609459200000), ("2024-01-01", 170406720000
 
 # daily coverage in the research window: how many UTC days have all 24 bars
 print()
-from collections import Counter
 per_day = Counter()
 for ot, _, _ in rows:
     if ot >= 1609459200000:
-        per_day[datetime.fromtimestamp(ot / 1000, tz=timezone.utc).date()] += 1
+        per_day[datetime.fromtimestamp(ot / 1000, tz=UTC).date()] += 1
 short = {d: n for d, n in per_day.items() if n != 24}
 print(f"UTC days since 2021-01-01 with data: {len(per_day)}")
 print(f"  days with all 24 bars : {len(per_day) - len(short)}")
