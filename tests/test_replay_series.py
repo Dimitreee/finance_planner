@@ -28,12 +28,7 @@ from cryptoguard_core.dataset import ARM_A_FEATURES, DecisionDayRow, build_decis
 from cryptoguard_core.evaluate import sensitivity_from_walk, walk_arm
 from cryptoguard_core.ingest import FatalDefect, load_archive_backfill
 from cryptoguard_core.model import PreviousDirectionBaseline
-from cryptoguard_core.policy import (
-    COST_SCENARIOS,
-    HEADLINE_SCENARIO,
-    PolicyConfig,
-    Position,
-)
+from cryptoguard_core.policy import COST_SCENARIOS, HEADLINE_SCENARIO, PolicyConfig, Position
 from cryptoguard_core.replay import ReplaySeries
 
 FIRST_DAY = date(2022, 1, 1)
