@@ -12,7 +12,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -23,11 +23,19 @@ import yaml
 
 from cryptoguard_core.dataset import (
     ARM_A_FEATURES,
+    ARMS_NEEDING_NEWS,
+    FEATURES_BY_ARM,
     RESEARCH_WINDOW_FIRST_DAY,
     RESEARCH_WINDOW_LAST_DAY,
     WARM_UP_DAYS,
+    DecisionDayRow,
 )
 from cryptoguard_core.ingest import FatalDefect
+from cryptoguard_core.news_features import (
+    ARM_B_EXTRA_FEATURES,
+    ARM_C_EXTRA_FEATURES,
+    LAG_GRID_HOURS,
+)
 from cryptoguard_core.policy import COST_SCENARIOS, HEADLINE_SCENARIO
 from cryptoguard_core.protocol import (
     DECISION_DEADLINE_UTC,
@@ -126,6 +134,10 @@ class DatasetManifest:
     first_day: date
     last_day: date
     source_digests: Mapping[str, str]
+    # Which Experiment Arm's features the rows carry, and under which Assumed Availability Lag. A
+    # price-only arm records no lag, because it reads no news and a recorded lag would imply it did.
+    arm: str
+    lag_hours: int | None
 
 
 _QUARTER_LABEL = re.compile(r"^(\d{4})Q([1-4])$")
@@ -172,13 +184,15 @@ def _check(values: Mapping[str, Any]) -> None:
 
     if tuple(values["features"]["arm_a"]) != ARM_A_FEATURES:
         _refuse("features.arm_a does not match the frozen Arm A feature list in the code")
-
+    if tuple(values["features"]["arm_b_extra"]) != ARM_B_EXTRA_FEATURES:
+        _refuse("features.arm_b_extra does not match the frozen Arm B feature list in the code")
+    if tuple(values["features"]["arm_c_extra"]) != ARM_C_EXTRA_FEATURES:
+        _refuse("features.arm_c_extra does not match the frozen Arm C feature list in the code")
     news = values["news"]
-    if news["primary_lag_hours"] not in news["lag_grid_hours"]:
-        _refuse(
-            f"news.primary_lag_hours {news['primary_lag_hours']} is not in the lag grid "
-            f"{list(news['lag_grid_hours'])}"
-        )
+    if tuple(news["lag_grid_hours"]) != LAG_GRID_HOURS:
+        _refuse(f"news.lag_grid_hours {news['lag_grid_hours']} != {list(LAG_GRID_HOURS)}")
+    if news["primary_lag_hours"] not in LAG_GRID_HOURS:
+        _refuse(f"news.primary_lag_hours {news['primary_lag_hours']} is not in the frozen lag grid")
 
     policy = values["policy"]
     if not policy["to_usdt_at"] < policy["to_btc_at"]:
@@ -244,54 +258,116 @@ def load_contract(path: Path = CONTRACT_PATH) -> ExperimentContract:
     return ExperimentContract(path=path, values=_freeze(values), digest=digest_of(values))
 
 
+def _arm_of(features: Mapping[str, float]) -> str:
+    """Which arm a row belongs to, read off its feature names."""
+    names = tuple(features)
+    for arm, expected in FEATURES_BY_ARM.items():
+        if names == expected:
+            return arm
+    _refuse(f"features {list(names)} match no known arm")
+    raise AssertionError("unreachable")
+
+
 def build_dataset_manifest(
     *,
     contract: ExperimentContract,
-    row_count: int,
-    first_day: date,
-    last_day: date,
+    rows: Sequence[DecisionDayRow],
     source_digests: Mapping[str, str],
 ) -> DatasetManifest:
+    """Describe the dataset that was actually built, reading arm, lag and span off the rows.
+
+    Taking these as arguments let a caller state a lag the rows were not built under, and nothing
+    downstream could have caught it: the digest would assert the Primary Lag over a one-hour-lag
+    dataset. Derived, the two cannot disagree.
+    """
     if set(source_digests) != set(SOURCE_MANIFESTS):
         _refuse(
             f"a dataset manifest must name exactly {sorted(SOURCE_MANIFESTS)}, "
             f"got {sorted(source_digests)}"
         )
+    if not rows:
+        _refuse("a dataset manifest describes rows; there are none")
+
+    arms = {_arm_of(row.features) for row in rows}
+    if len(arms) > 1:
+        _refuse(f"the rows carry more than one arm: {sorted(arms)}")
+    lags = {row.news_lag_hours for row in rows}
+    if len(lags) > 1:
+        _refuse(f"the rows carry more than one Assumed Availability Lag: {sorted(map(str, lags))}")
+
+    arm = arms.pop()
+    lag_hours = lags.pop()
+    _check_arm_and_lag(arm, lag_hours)
     return DatasetManifest(
         contract_digest=contract.digest,
-        row_count=row_count,
-        first_day=first_day,
-        last_day=last_day,
+        row_count=len(rows),
+        first_day=rows[0].day,
+        last_day=rows[-1].day,
         source_digests=dict(source_digests),
+        arm=arm,
+        lag_hours=lag_hours,
     )
+
+
+def _check_arm_and_lag(arm: str, lag_hours: int | None) -> None:
+    """The invariants binding an arm to a lag, applied on the way in and on the way back out."""
+    if arm not in FEATURES_BY_ARM:
+        _refuse(f"arm {arm!r} is not one of {sorted(FEATURES_BY_ARM)}")
+    reads_news = arm in ARMS_NEEDING_NEWS
+    if reads_news and lag_hours is None:
+        _refuse(f"arm {arm!r} reads news, so its dataset must record the lag it was built under")
+    if not reads_news and lag_hours is not None:
+        _refuse(f"arm {arm!r} reads no news, so recording a lag would imply that it did")
+    if lag_hours is not None and lag_hours not in LAG_GRID_HOURS:
+        _refuse(f"lag {lag_hours}h is not in the frozen lag grid {list(LAG_GRID_HOURS)}")
+
+
+def _manifest_mapping(manifest: DatasetManifest) -> dict[str, Any]:
+    """The one serialisation of a manifest, so the file and its digest cannot disagree."""
+    return {
+        "contract_digest": manifest.contract_digest,
+        "row_count": manifest.row_count,
+        "first_day": manifest.first_day.isoformat(),
+        "last_day": manifest.last_day.isoformat(),
+        "source_digests": dict(manifest.source_digests),
+        "arm": manifest.arm,
+        "lag_hours": manifest.lag_hours,
+    }
+
+
+def digest_of_manifest(manifest: DatasetManifest) -> str:
+    """What a dataset is, as one value. Two datasets differing in arm or lag differ here."""
+    return digest_of(_manifest_mapping(manifest))
 
 
 def write_dataset_manifest(path: Path, manifest: DatasetManifest) -> None:
     path.write_text(
-        json.dumps(
-            {
-                "contract_digest": manifest.contract_digest,
-                "row_count": manifest.row_count,
-                "first_day": manifest.first_day.isoformat(),
-                "last_day": manifest.last_day.isoformat(),
-                "source_digests": dict(manifest.source_digests),
-            },
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n",
+        json.dumps(_manifest_mapping(manifest), indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
 
 
 def read_dataset_manifest(path: Path) -> DatasetManifest:
+    """Read a manifest and re-apply every invariant the build enforced.
+
+    A fit is handed the manifest that was read, not the one that was built, so validating only on
+    the way in leaves the invariants unenforced exactly where they matter. A hand-edited arm/lag
+    pair is refused here, and a manifest written before these fields existed is named as such
+    instead of raising a bare KeyError.
+    """
     raw = json.loads(path.read_text(encoding="utf-8"))
+    missing = [key for key in ("arm", "lag_hours") if key not in raw]
+    if missing:
+        _refuse(f"the manifest at {path} predates the arm and lag fields: missing {missing}")
+    _check_arm_and_lag(raw["arm"], raw["lag_hours"])
     return DatasetManifest(
         contract_digest=raw["contract_digest"],
         row_count=raw["row_count"],
         first_day=date.fromisoformat(raw["first_day"]),
         last_day=date.fromisoformat(raw["last_day"]),
         source_digests=dict(raw["source_digests"]),
+        arm=raw["arm"],
+        lag_hours=raw["lag_hours"],
     )
 
 

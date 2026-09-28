@@ -22,6 +22,12 @@ from cryptoguard_core.dataset import (
     build_decision_day_rows,
 )
 from cryptoguard_core.ingest import HOUR_MS, Bar, FatalDefect, load_archive_backfill
+from cryptoguard_core.news import NewsItem
+from cryptoguard_core.news_features import (
+    ARM_B_EXTRA_FEATURES,
+    HeadlineAvailability,
+    headline_availability,
+)
 
 # Enough history for a 30-day Warm-Up Buffer before 2021-02-01, plus days to resolve every Label.
 SERIES_START = datetime(2021, 1, 2, tzinfo=UTC)
@@ -265,3 +271,157 @@ def test_a_fit_still_refuses_a_row_whose_outcome_is_unknown() -> None:
     bars = hourly_series(SERIES_START, 31 * 24, quote=RISING)
     with pytest.raises(FatalDefect):
         build_decision_day_rows(bars, FIRST_DAY, FIRST_DAY, require_label=True)
+
+
+# --- Arms: which features a row carries, and what a news arm additionally requires ---------------
+
+NEWS_WARM_UP_DAY = datetime(2021, 1, 20, 12, tzinfo=UTC)
+
+
+def news_items(*stated: datetime) -> list[NewsItem]:
+    """BTC headlines at the given instants, plus one before the seven-day warm-up needs it."""
+    instants = (NEWS_WARM_UP_DAY, *stated)
+    return [
+        NewsItem(
+            item_id=str(index),
+            title=f"headline {index}",
+            description=None,
+            source_domain=None,
+            source_url=None,
+            stated_at=instant.replace(tzinfo=None),
+            stated_at_raw=instant.strftime("%Y-%m-%d %H:%M:%S"),
+            stated_timezone_suffix=None,
+            currencies=("BTC",),
+        )
+        for index, instant in enumerate(instants)
+    ]
+
+
+def availability(*stated: datetime, lag_hours: int = 24) -> HeadlineAvailability:
+    """Coverage is declared through the last Decision Day under test, not inferred from items."""
+    return headline_availability(
+        news_items(*stated),
+        lag_hours=lag_hours,
+        covers_through_ms=int(datetime(2021, 2, 4, tzinfo=UTC).timestamp() * 1000),
+    )
+
+
+def test_arm_a_is_the_default_and_carries_exactly_its_seven_features() -> None:
+    rows = build(quote=RISING)
+    assert all(tuple(row.features) == ARM_A_FEATURES for row in rows)
+
+
+def test_arm_b_carries_arm_as_features_plus_exactly_two_more() -> None:
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    rows = build_decision_day_rows(
+        bars, FIRST_DAY, LAST_DAY, arm="b", news=availability(datetime(2021, 1, 31, 6, tzinfo=UTC))
+    )
+    assert all(tuple(row.features) == ARM_A_FEATURES + ARM_B_EXTRA_FEATURES for row in rows)
+
+
+def test_arm_b_leaves_every_arm_a_feature_value_untouched() -> None:
+    """The refactor's contract: adding an arm may not move a number Arm A already had."""
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    arm_a = build_decision_day_rows(bars, FIRST_DAY, LAST_DAY)
+    arm_b = build_decision_day_rows(
+        bars, FIRST_DAY, LAST_DAY, arm="b", news=availability(datetime(2021, 1, 31, 6, tzinfo=UTC))
+    )
+    for before, after in zip(arm_a, arm_b, strict=True):
+        assert before.day == after.day
+        assert before.anchor_price == after.anchor_price
+        assert before.decision_price == after.decision_price
+        assert before.label == after.label
+        for name in ARM_A_FEATURES:
+            assert after.features[name] == before.features[name]
+
+
+def test_a_news_arm_without_news_is_refused() -> None:
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    with pytest.raises(FatalDefect) as caught:
+        build_decision_day_rows(bars, FIRST_DAY, LAST_DAY, arm="b")
+    assert caught.value.kind == "arm_requires_news"
+
+
+def test_arm_a_refuses_news_rather_than_silently_ignoring_it() -> None:
+    """Accepting it would build a row whose features do not match the arm that was asked for."""
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    with pytest.raises(FatalDefect) as caught:
+        build_decision_day_rows(bars, FIRST_DAY, LAST_DAY, arm="a", news=availability())
+    assert caught.value.kind == "arm_takes_no_news"
+
+
+def test_an_unknown_arm_is_refused() -> None:
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    with pytest.raises(FatalDefect) as caught:
+        build_decision_day_rows(bars, FIRST_DAY, LAST_DAY, arm="z")
+    assert caught.value.kind == "unknown_arm"
+
+
+def test_a_news_archive_starting_inside_the_seven_day_window_is_fatal() -> None:
+    """A thin archive start must not be reported as a quiet week."""
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    late = headline_availability(
+        covers_through_ms=int(datetime(2021, 2, 4, tzinfo=UTC).timestamp() * 1000),
+        lag_hours=24,
+        items=[
+            NewsItem(
+                item_id="late",
+                title="late",
+                description=None,
+                source_domain=None,
+                source_url=None,
+                stated_at=datetime(2021, 1, 30, 12),
+                stated_at_raw="2021-01-30 12:00:00",
+                stated_timezone_suffix=None,
+                currencies=("BTC",),
+            )
+        ],
+    )
+    with pytest.raises(FatalDefect) as caught:
+        build_decision_day_rows(bars, FIRST_DAY, LAST_DAY, arm="b", news=late)
+    assert caught.value.kind == "news_warm_up_underrun"
+
+
+def test_a_headline_after_the_feature_cutoff_cannot_reach_that_day() -> None:
+    """The same rule the price features obey, asserted on the news side."""
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    # Stated at 01:00 on 2021-02-01, so at lag 24h it is not available until 2021-02-02T01:00.
+    rows = build_decision_day_rows(
+        bars,
+        FIRST_DAY,
+        LAST_DAY,
+        arm="b",
+        news=availability(datetime(2021, 2, 1, 1, tzinfo=UTC)),
+    )
+    first_day_row = rows[0]
+    assert first_day_row.day == FIRST_DAY
+    assert first_day_row.features["news_count_24h_log1p"] == 0.0
+
+
+def test_a_row_records_the_lag_its_news_features_were_read_under() -> None:
+    """So a dataset cannot claim one lag while carrying the features of another."""
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    stated = datetime(2021, 1, 31, 6, tzinfo=UTC)
+    arm_a = build_decision_day_rows(bars, FIRST_DAY, LAST_DAY)
+    at_one = build_decision_day_rows(
+        bars, FIRST_DAY, LAST_DAY, arm="b", news=availability(stated, lag_hours=1)
+    )
+    at_primary = build_decision_day_rows(
+        bars, FIRST_DAY, LAST_DAY, arm="b", news=availability(stated, lag_hours=24)
+    )
+    assert all(row.news_lag_hours is None for row in arm_a)
+    assert all(row.news_lag_hours == 1 for row in at_one)
+    assert all(row.news_lag_hours == 24 for row in at_primary)
+
+
+def test_a_build_reaching_past_the_news_archives_coverage_is_fatal() -> None:
+    """The live path would otherwise emit a measured zero for every day past the archive's end."""
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    short = headline_availability(
+        news_items(datetime(2021, 1, 31, 6, tzinfo=UTC)),
+        lag_hours=24,
+        covers_through_ms=int(datetime(2021, 2, 2, tzinfo=UTC).timestamp() * 1000),
+    )
+    with pytest.raises(FatalDefect) as caught:
+        build_decision_day_rows(bars, FIRST_DAY, LAST_DAY, arm="b", news=short)
+    assert caught.value.kind == "news_coverage_underrun"

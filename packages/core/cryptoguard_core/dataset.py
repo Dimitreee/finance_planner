@@ -18,6 +18,13 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 
 from cryptoguard_core.ingest import HOUR_MS, Bar, FatalDefect
+from cryptoguard_core.news_features import (
+    ARM_B_EXTRA_FEATURES,
+    NEWS_FEATURE_NAMES,
+    HeadlineAvailability,
+    headline_count_features,
+    require_news_span,
+)
 
 DAY_MS = 24 * HOUR_MS
 BARS_PER_DAY = 24
@@ -35,6 +42,18 @@ ARM_A_FEATURES = (
     "rv_7",
     "rv_7_over_30",
     "volume_7_over_30",
+)
+
+# An Experiment Arm is a feature configuration and nothing more: same folds, same preprocessing,
+# same model family. Arm C is added by its own ticket.
+FEATURES_BY_ARM: Mapping[str, tuple[str, ...]] = {
+    "a": ARM_A_FEATURES,
+    "b": ARM_A_FEATURES + ARM_B_EXTRA_FEATURES,
+}
+# Derived, not maintained by hand: an arm reads news exactly when its features include a news
+# feature. A second hand-written list would let a new arm be added to one and missed in the other.
+ARMS_NEEDING_NEWS = frozenset(
+    arm for arm, features in FEATURES_BY_ARM.items() if NEWS_FEATURE_NAMES & set(features)
 )
 
 _RETURN_LAGS = (1, 3, 7, 14)
@@ -55,6 +74,10 @@ class DecisionDayRow:
     label_end_ms: int
     bars_in_day: int
     features: Mapping[str, float]
+    # The Assumed Availability Lag the news features were read under, so a dataset cannot claim
+    # one lag while carrying another. Defaults to None, the price-only reading: a news arm that
+    # failed to record its lag is refused when its manifest is built, rather than passing as Arm A.
+    news_lag_hours: int | None = None
 
 
 def _iso(milliseconds: int) -> str:
@@ -177,7 +200,12 @@ def _window_stats(series: _Series, cutoff_ms: int, days: int) -> tuple[float, fl
     return volatility, volume
 
 
-def _features(series: _Series, cutoff_ms: int, anchor: float) -> dict[str, float]:
+def _features(
+    series: _Series,
+    cutoff_ms: int,
+    anchor: float,
+    news: HeadlineAvailability | None,
+) -> dict[str, float]:
     features: dict[str, float] = {}
     for lag in _RETURN_LAGS:
         past = series.anchor_closed_by(cutoff_ms - lag * DAY_MS)
@@ -189,6 +217,9 @@ def _features(series: _Series, cutoff_ms: int, anchor: float) -> dict[str, float
     features["rv_7"] = short_volatility
     features["rv_7_over_30"] = short_volatility / long_volatility
     features["volume_7_over_30"] = short_volume / long_volume
+
+    if news is not None:
+        features.update(headline_count_features(news, cutoff_ms))
     return features
 
 
@@ -198,6 +229,8 @@ def build_decision_day_rows(
     last_day: date = RESEARCH_WINDOW_LAST_DAY,
     *,
     require_label: bool = True,
+    arm: str = "a",
+    news: HeadlineAvailability | None = None,
 ) -> tuple[DecisionDayRow, ...]:
     """Build one row per Decision Day in [first_day, last_day].
 
@@ -208,7 +241,29 @@ def build_decision_day_rows(
     `require_label` is what separates a row built for a fit from a row built for a decision. A fit
     needs the outcome, so a missing next-day bar is fatal. A decision does not: today's advice is
     owed at 00:10 today, long before tomorrow's Decision Price exists.
+
+    `arm` names the feature configuration, and the row's features are asserted against the arm's
+    frozen list before the build returns. A news arm without news, or a price-only arm handed news,
+    is refused rather than quietly built: either would produce rows whose features do not match the
+    arm asked for, and a comparison between arms is only about features.
     """
+    expected = FEATURES_BY_ARM.get(arm)
+    if expected is None:
+        raise FatalDefect(
+            "unknown_arm",
+            f"arm {arm!r} is not one of {sorted(FEATURES_BY_ARM)}",
+        )
+    if arm in ARMS_NEEDING_NEWS and news is None:
+        raise FatalDefect(
+            "arm_requires_news",
+            f"arm {arm!r} carries news features, so it needs headline availability to be built",
+        )
+    if arm not in ARMS_NEEDING_NEWS and news is not None:
+        raise FatalDefect(
+            "arm_takes_no_news",
+            f"arm {arm!r} is price-only; accepting news here would build features it does not name",
+        )
+
     series = _Series(bars)
     first_cutoff = _midnight_ms(first_day)
     earliest_needed = first_cutoff - WARM_UP_DAYS * DAY_MS
@@ -219,6 +274,12 @@ def build_decision_day_rows(
             f"the Warm-Up Buffer needs bars from "
             f"{datetime.fromtimestamp(earliest_needed / 1000, tz=UTC).isoformat()}, "
             f"but the series starts later",
+        )
+    if news is not None:
+        require_news_span(
+            news,
+            first_cutoff_ms=first_cutoff,
+            last_cutoff_ms=_midnight_ms(last_day),
         )
 
     rows: list[DecisionDayRow] = []
@@ -254,9 +315,20 @@ def build_decision_day_rows(
                 ),
                 label_end_ms=next_cutoff + HOUR_MS,
                 bars_in_day=series.count_in_day(cutoff),
-                features=_features(series, cutoff, anchor),
+                features=_features(series, cutoff, anchor, news),
+                news_lag_hours=None if news is None else news.lag_hours,
             )
         )
         day += timedelta(days=1)
+
+    for row in rows:
+        if tuple(row.features) != expected:
+            # Derivable, so it is checked rather than trusted: a feature list that drifts from
+            # the arm it claims would make the comparison measure something other than features.
+            raise FatalDefect(
+                "arm_feature_mismatch",
+                f"arm {arm!r} produced {list(row.features)} for {row.day.isoformat()}, "
+                f"expected {list(expected)}",
+            )
 
     return tuple(rows)

@@ -49,6 +49,14 @@ features:
     - rv_7_over_30
     - volume_7_over_30
   arm_b_extra:
+    # Defined by ADR-0020, and pinned to the code constants in cryptoguard_core.news_features.
+    # Both windows run over availability instants (stated time read as UTC + the lag), never over
+    # stated times: over stated times the 24-hour window is empty at the Primary Lag.
+    #   news_count_24h_log1p        = log1p(headlines available in (cutoff - 24h, cutoff])
+    #   news_count_24h_over_7d_mean = recent / ((baseline + 1) / 7), where baseline counts the
+    #                                 seven days ending 24h before the cutoff. The baseline excludes
+    #                                 today so the ratio is not capped at 7; the +1 prior is what
+    #                                 removes the zero-denominator case without inventing a ceiling.
     - news_count_24h_log1p
     - news_count_24h_over_7d_mean
   arm_c_extra:
