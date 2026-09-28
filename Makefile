@@ -164,6 +164,18 @@ intervals: ## Bootstrap Intervals for the Primary Comparison and the Headline Me
 	@# them. Takes several minutes at the pre-registered 10 000 resamples.
 	uv run python scripts/bootstrap_intervals.py
 
+.PHONY: holdout
+holdout: ## Spend the single permitted evaluation of the Final Holdout (irreversible)
+	@# Succeeds exactly once. A second invocation refuses and exits non-zero without producing a
+	@# number (ADR-0018). Use --dry-run first to see the frozen configuration and the digest.
+	uv run python scripts/final_holdout.py
+
+.PHONY: holdout-interval
+holdout-interval: ## Bootstrap Intervals describing the recorded Final Holdout result
+	@# Spends nothing and is not a second evaluation: it re-derives the deterministic per-day series
+	@# and refuses unless what it re-derived is identical to what the marker records.
+	uv run python scripts/holdout_interval.py
+
 .PHONY: decide
 decide: guard-day guard-db-url ## Publish one Decision Day, e.g. make decide DAY=2026-02-01
 	uv run cryptoguard-job decide --day $(DAY)

@@ -1,0 +1,34 @@
+{
+  "configuration": {
+    "arm": "A",
+    "contract_digest": "538a0c73572b72dc03174ce99e3681c24f0755e73cdb68a0ad526e9bdba62d06",
+    "cost_scenario": "base",
+    "lag_hours": null,
+    "regularisation_grid": [
+      0.01,
+      0.1,
+      1.0
+    ],
+    "regularisation_selected": "within_fold_inner_validation",
+    "to_btc_at": 0.55,
+    "to_usdt_at": 0.45
+  },
+  "evaluations_allowed": 1,
+  "result": {
+    "accuracy": 0.5,
+    "brier": 0.24966846814691313,
+    "buy_and_hold_return": -0.03859458055062681,
+    "first_day": "2025-01-01",
+    "last_day": "2025-11-30",
+    "log_loss": 0.6924803689625563,
+    "max_drawdown": 0.3215429220583066,
+    "net_return": -0.1726063870831338,
+    "scored_days": 334,
+    "time_invested": 0.7724550898203593,
+    "trades": 9,
+    "turnover": 8.003926060845595
+  },
+  "spends_a_trial": false,
+  "spent_at": "2026-09-28T08:24:18.037322+00:00",
+  "trial_reasoning": "Confirmatory, not selective: the arm, the lag, the Policy thresholds, the regularisation procedure and the Cost Scenario were all frozen in the Experiment Contract before this ran, and ADR-0018 forbids the number influencing anything afterwards \u2014 a defect found later is disclosed or the claim is withdrawn, never re-run. A Trial is an evaluation whose result could have changed a choice; this one has none left to change, so it spends none."
+}

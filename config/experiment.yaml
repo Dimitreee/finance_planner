@@ -39,6 +39,21 @@ splits:
   final_holdout_last_day: 2025-11-30
   final_holdout_evaluations_allowed: 1
 
+# The one configuration the Final Holdout is spent on, frozen before the single evaluation ran and
+# pinned to the constants in cryptoguard_core.holdout (ADR-0018). A configuration chosen after seeing
+# the holdout would not be a holdout result, so this section exists in the digest the marker records.
+#
+# Why Arm A, price-only: every one of the six news configurations scored worse than Arm A on the
+# Development Period, and the Primary Comparison's Bootstrap Interval puts Arm C at the Primary Lag
+# above Arm A in log loss at the reported block length. Arm A is also the promoted release. Nothing
+# about that choice depends on the holdout, which is what makes this a confirmatory measurement.
+final_holdout:
+  arm: a
+  lag_hours: null
+  cost_scenario: base
+  frozen_on: 2026-09-28
+  spends_a_trial: false
+
 features:
   arm_a:
     - r_1

@@ -14,7 +14,14 @@ data/cache/
 !config/**/*.csv
 
 models/
-artifacts/
+# `artifacts/*` rather than `artifacts/`, so git still descends into the directory and the negation
+# below can take effect. A file whose parent directory is excluded cannot be re-included at all, so
+# excluding the directory itself would make the exception silently do nothing.
+artifacts/*
+# That one exception is the point of ADR-0018. The Final Holdout's spent-marker is the only evidence
+# that the single permitted evaluation has happened; untracked, a fresh clone reads the holdout as
+# unspent and the guard lets it be spent a second time.
+!artifacts/final_holdout.json
 mlruns/
 *.pt
 *.pth
