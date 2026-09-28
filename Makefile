@@ -85,6 +85,17 @@ db: ## Start PostgreSQL in Docker and wait for it
 db-stop: ## Stop the database, keeping its volume
 	docker compose stop db
 
+.PHONY: db-local
+db-local: ## Start a throwaway PostgreSQL for the seam tests without Docker, and print its URL
+	@# On 55432, so it cannot be confused with the database CRYPTOGUARD_DATABASE_URL points at.
+	@# Run the suite against it with:
+	@#   CRYPTOGUARD_TEST_DATABASE_URL=$$(make -s db-local) uv run pytest
+	@./scripts/dev_postgres.sh start
+
+.PHONY: db-local-stop
+db-local-stop: ## Stop the throwaway PostgreSQL
+	@./scripts/dev_postgres.sh stop
+
 .PHONY: api
 api: guard-db-url ## Serve the read API on :8000
 	uv run uvicorn --factory cryptoguard_api:create_app --host 127.0.0.1 --port 8000
