@@ -15,7 +15,7 @@ import pytest
 from cryptoguard_core.backtest import BASE_SCENARIO, run_backtest
 from cryptoguard_core.contract import CONTRACT_PATH, load_contract
 from cryptoguard_core.dataset import ARM_A_FEATURES, DAY_MS, DecisionDayRow
-from cryptoguard_core.evaluate import evaluate_arm_a
+from cryptoguard_core.evaluate import evaluate_arm
 from cryptoguard_core.ingest import HOUR_MS, FatalDefect
 from cryptoguard_core.metrics import (
     accuracy,
@@ -172,7 +172,7 @@ class TestEvaluation:
         trials = TrialLog(tmp_path / "trials.json", budget=12)
         reaching = (Fold(date(2025, 1, 1), date(2025, 3, 31)),)
         with pytest.raises(FatalDefect) as caught:
-            evaluate_arm_a(series(10), contract, trials, releases_dir=tmp_path, folds=reaching)
+            evaluate_arm(series(10), contract, trials, releases_dir=tmp_path, folds=reaching)
         assert caught.value.kind == "contract_inconsistent"
         assert "Final Holdout" in str(caught.value)
 
@@ -229,7 +229,7 @@ class TestContractDrivenProtocol:
         contract = load_contract()
         trials = TrialLog(tmp_path / "trials.json", budget=12)
         with pytest.raises(FatalDefect):
-            evaluate_arm_a(
+            evaluate_arm(
                 series(10),  # nowhere near enough history for the contract's first fold
                 contract,
                 trials,

@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from datetime import date
 from types import MappingProxyType
 
-from cryptoguard_core.dataset import ARM_A_FEATURES, DecisionDayRow
+from cryptoguard_core.dataset import FEATURES_BY_ARM, DecisionDayRow
 from cryptoguard_core.ingest import FatalDefect
 from cryptoguard_core.model import ModelRelease
 from cryptoguard_core.policy import (
@@ -27,10 +27,16 @@ from cryptoguard_core.policy import (
 
 BASE_SCENARIO = COST_SCENARIOS[HEADLINE_SCENARIO]
 
-# An arm names a feature set, so the label on a result has to be checked against the rows it was
-# folded over. An unchecked label is worse than none: two runs over the same rows could be filed as
-# Arm A and Arm C and be indistinguishable in a report.
-ARM_FEATURES: Mapping[str, tuple[str, ...]] = MappingProxyType({"A": ARM_A_FEATURES})
+# An arm names a feature set, so the label on a result has to be checked against the rows it
+# was folded over. An unchecked label is worse than none: two runs over the same rows could be
+# filed as Arm A and Arm C and be indistinguishable in a report.
+#
+# Derived from the dataset's per-arm lists rather than restated here, and keyed by the upper-case
+# name a published result carries. A second hand-written map is how Arm B and Arm C came to exist
+# in the builder while staying unknown to the backtest.
+ARM_FEATURES: Mapping[str, tuple[str, ...]] = MappingProxyType(
+    {arm.upper(): features for arm, features in FEATURES_BY_ARM.items()}
+)
 DEFAULT_ARM = "A"
 
 
@@ -109,6 +115,22 @@ def run_backtest(
         raise FatalDefect(
             "arm_feature_mismatch",
             f"arm {arm!r} needs {sorted(missing)}, which these rows do not carry",
+        )
+    # Containing the arm's features is not enough now that the arms are cumulative: Arm C's rows
+    # carry every one of Arm A's, so a subset test alone would score them and file them as Arm A.
+    # What is refused is the ambiguity — rows that also satisfy a wider arm are not this arm's.
+    ambiguous = sorted(
+        other
+        for other, features in ARM_FEATURES.items()
+        if other != arm
+        and len(features) > len(expected_features)
+        and all(name in rows[0].features for name in features)
+    )
+    if ambiguous:
+        raise FatalDefect(
+            "arm_feature_mismatch",
+            f"these rows also carry every feature of arm(s) {ambiguous}, so filing them as "
+            f"arm {arm!r} would label a wider feature set as a narrower one",
         )
     for earlier, later in zip(rows, rows[1:], strict=False):
         if later.day <= earlier.day:

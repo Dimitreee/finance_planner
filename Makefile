@@ -152,6 +152,12 @@ audit: ## Re-run every data audit against the local snapshots
 evaluate: guard-db-url ## Fit Arm A across the folds, publish the Replay Result, promote the release
 	uv run cryptoguard-job evaluate --promote
 
+.PHONY: compare
+compare: ## Fit arms B and C across the lag grid and answer the Primary Comparison
+	@# Spends one Trial per (arm, lag). Refuses to refit a pair the Trial log already holds, and
+	@# refuses to start unless the remaining budget covers every pair. --dry-run prints the plan.
+	uv run python scripts/compare_arms.py
+
 .PHONY: decide
 decide: guard-day guard-db-url ## Publish one Decision Day, e.g. make decide DAY=2026-02-01
 	uv run cryptoguard-job decide --day $(DAY)

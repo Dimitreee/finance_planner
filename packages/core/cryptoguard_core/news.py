@@ -15,7 +15,7 @@ import sys
 from collections import Counter
 from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from cryptoguard_core.ingest import FatalDefect
@@ -24,6 +24,17 @@ from cryptoguard_core.ingest import FatalDefect
 NEWS_CSV = Path(__file__).resolve().parents[3] / (
     "data/raw/news/news_currencies_source_joinedResult.csv"
 )
+
+# The instant through which this archive snapshot claims to be complete, declared here because it is
+# a property of the snapshot and not derivable from the records: a silent week and an archive that
+# stopped look identical from the inside. `news_features.require_news_span` enforces it; this
+# constant is the claim that guard checks against.
+#
+# Measured, not assumed: the last BTC-attributed record is stated 2025-12-03T10:28:51
+# (reports/data_audit_news.md). The claim is truncated to the midnight before it, so the partially
+# collected final day is never read as a quiet one.
+ARCHIVE_COVERS_THROUGH = datetime(2025, 12, 3, tzinfo=UTC)
+ARCHIVE_COVERS_THROUGH_MS = int(ARCHIVE_COVERS_THROUGH.timestamp() * 1000)
 
 _NULL = "NULL"
 _STATED_FORMAT = "%Y-%m-%d %H:%M:%S"

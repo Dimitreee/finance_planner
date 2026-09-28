@@ -1,0 +1,1113 @@
+{
+  "agreed": 102,
+  "agreement": 0.5930232558139535,
+  "agreement_reference": "sample_majority_class_rate",
+  "compared": 172,
+  "confusion": [
+    {
+      "count": 19,
+      "extractor_label": "negative",
+      "hand_label": "negative"
+    },
+    {
+      "count": 9,
+      "extractor_label": "neutral",
+      "hand_label": "negative"
+    },
+    {
+      "count": 2,
+      "extractor_label": "positive",
+      "hand_label": "negative"
+    },
+    {
+      "count": 5,
+      "extractor_label": "negative",
+      "hand_label": "neutral"
+    },
+    {
+      "count": 23,
+      "extractor_label": "neutral",
+      "hand_label": "neutral"
+    },
+    {
+      "count": 7,
+      "extractor_label": "positive",
+      "hand_label": "neutral"
+    },
+    {
+      "count": 4,
+      "extractor_label": "negative",
+      "hand_label": "positive"
+    },
+    {
+      "count": 43,
+      "extractor_label": "neutral",
+      "hand_label": "positive"
+    },
+    {
+      "count": 60,
+      "extractor_label": "positive",
+      "hand_label": "positive"
+    }
+  ],
+  "extractor_revision": "4556d13015211d73dccd3fdd39d39232506f3e43",
+  "labelled": 210,
+  "labels": [
+    {
+      "extractor_label": "negative",
+      "hand_label": "neutral",
+      "item_id": "100343"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "101212"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "103193"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "10461"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "10548"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "12182"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "12924"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "neutral",
+      "item_id": "146117"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "unclear",
+      "item_id": "146147"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "146160"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "146304"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "146440"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "146457"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "146513"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "146519"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "147441"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "148754"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "148762"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "150702"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "150703"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "150717"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "150720"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "151041"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "151181"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "151266"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "151538"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "151997"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "152001"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "152518"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "neutral",
+      "item_id": "152891"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "154179"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "neutral",
+      "item_id": "154212"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "154226"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "154732"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "155559"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "156478"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "156609"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "156829"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "157197"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "157860"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "157948"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "159906"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "160054"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "neutral",
+      "item_id": "160225"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "160695"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "162147"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "163411"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "163573"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "neutral",
+      "item_id": "164154"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "164350"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "164586"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "165051"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "165689"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "166231"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "166455"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "166492"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "166495"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "16677"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "168166"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "168170"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "169310"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "unclear",
+      "item_id": "169636"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "169721"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "169808"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "171271"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "171280"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "positive",
+      "item_id": "172626"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "173825"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "negative",
+      "item_id": "174638"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "174802"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "174989"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "175001"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "175088"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "177056"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "177096"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "unclear",
+      "item_id": "177144"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "177184"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "178320"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "178860"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "178888"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "178975"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "179324"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "179391"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "179890"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "neutral",
+      "item_id": "180120"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "180290"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "180856"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "181489"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "181792"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "neutral",
+      "item_id": "183038"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "183226"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "183683"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "184397"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "184408"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "185976"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "186893"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "186977"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "negative",
+      "item_id": "188403"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "189169"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "positive",
+      "item_id": "189293"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "189634"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "190539"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "190808"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "190861"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "192236"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "193337"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "193500"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "193513"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "unclear",
+      "item_id": "194073"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "194075"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "194169"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "194674"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "194819"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "195492"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "195629"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "195630"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "197215"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "198606"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "200208"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "201123"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "202172"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "202388"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "211317"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "211965"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "215628"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "223843"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "224113"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "225877"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "227461"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "227537"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "neutral",
+      "item_id": "227862"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "228050"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "228266"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "22915"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "230801"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "230817"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "230916"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "231377"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "231416"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "unclear",
+      "item_id": "231445"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "231773"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "232257"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "232354"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "232552"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "234326"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "234677"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "238692"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "239600"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "240977"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "242073"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "242306"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "242359"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "246076"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "248384"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "250353"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "254319"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "254427"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "254889"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "254982"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "256697"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "258940"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "6280"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "6636"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "75230"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "75869"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "neutral",
+      "item_id": "77664"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "neutral",
+      "item_id": "77929"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "78025"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "78164"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "78357"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "78403"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "78750"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "78765"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "78886"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "78931"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "78985"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "79130"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "81689"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "positive",
+      "item_id": "82146"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "82325"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "82358"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "82863"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "positive",
+      "item_id": "83160"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "83309"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "84767"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "85187"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "85753"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "negative",
+      "item_id": "85982"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "neutral",
+      "item_id": "86005"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "86037"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "86154"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "86183"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "86239"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "unclear",
+      "item_id": "86484"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "86536"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "86539"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "86773"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "unclear",
+      "item_id": "87652"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "90643"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "92672"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "positive",
+      "item_id": "93134"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "unclear",
+      "item_id": "94605"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "95576"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "9615"
+    },
+    {
+      "extractor_label": "negative",
+      "hand_label": "unclear",
+      "item_id": "96429"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "neutral",
+      "item_id": "97258"
+    },
+    {
+      "extractor_label": "neutral",
+      "hand_label": "negative",
+      "item_id": "99331"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "99374"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "99668"
+    },
+    {
+      "extractor_label": "positive",
+      "hand_label": "positive",
+      "item_id": "99994"
+    }
+  ],
+  "majority_class": "positive",
+  "majority_class_rate": 0.622093023255814,
+  "permitted_wording": "the extractor's reading of the headlines",
+  "seed": 20260928,
+  "transfers": false,
+  "unclear": 38
+}

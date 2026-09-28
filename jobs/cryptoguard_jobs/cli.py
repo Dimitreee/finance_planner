@@ -14,7 +14,7 @@ import cryptoguard_core
 from cryptoguard_core.contract import load_contract
 from cryptoguard_core.dataset import build_decision_day_rows
 from cryptoguard_core.decide import DEFAULT_ASSET, run_decision_job
-from cryptoguard_core.evaluate import evaluate_arm_a
+from cryptoguard_core.evaluate import evaluate_arm
 from cryptoguard_core.ingest import FatalDefect, load_archive_backfill
 from cryptoguard_core.model import PreviousDirectionBaseline
 from cryptoguard_core.release import current_release, promote
@@ -140,7 +140,7 @@ def _evaluate(namespace: argparse.Namespace) -> int:
     rows = build_decision_day_rows(bars, last_day=development_last)
     trials = TrialLog(namespace.trials, budget=contract.values["trials"]["budget"])
 
-    evaluation = evaluate_arm_a(
+    evaluation = evaluate_arm(
         rows,
         contract,
         trials,
