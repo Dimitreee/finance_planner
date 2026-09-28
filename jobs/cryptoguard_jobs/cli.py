@@ -149,6 +149,11 @@ def _evaluate(namespace: argparse.Namespace) -> int:
         corrects=namespace.corrects,
     )
     written = store.publish_replay(evaluation.replays)
+    # Alongside the aggregates and in the same run, so the day-by-day path a reader explores is the
+    # one those aggregates came from. Both are publish-once: the daily job cannot move either.
+    series_days, series_scenario_days = store.publish_replay_series(
+        namespace.asset, evaluation.release.version, evaluation.series
+    )
     if namespace.promote:
         promote(namespace.releases, evaluation.release.version)
 
@@ -164,6 +169,8 @@ def _evaluate(namespace: argparse.Namespace) -> int:
                 "brier": evaluation.brier,
                 "accuracy": evaluation.accuracy,
                 "replay_rows_written": written,
+                "series_days_written": series_days,
+                "series_scenario_days_written": series_scenario_days,
                 "scenarios": {
                     replay.cost_scenario: {
                         "net_return": replay.net_return,

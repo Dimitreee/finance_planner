@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
-from cryptoguard_core.backtest import CostSensitivity, run_cost_sensitivity
+from cryptoguard_core.backtest import CostSensitivity, run_cost_sensitivity, series_from
 from cryptoguard_core.contract import ExperimentContract
 from cryptoguard_core.dataset import (
     ARMS_NEEDING_NEWS,
@@ -33,6 +33,7 @@ from cryptoguard_core.news import ARCHIVE_COVERS_THROUGH_MS, NewsItem
 from cryptoguard_core.news_features import headline_availability
 from cryptoguard_core.policy import HEADLINE_SCENARIO
 from cryptoguard_core.release import LogisticRelease
+from cryptoguard_core.replay import ReplaySeries
 from cryptoguard_core.sentiment import READINGS_CACHE, ReadingCache, news_signal
 from cryptoguard_core.store import PublishedReplay
 from cryptoguard_core.training import (
@@ -58,6 +59,10 @@ class Evaluation:
     # an empty prediction series, lets every guard in this module pass over a mislabelled run.
     arm: str
     lag_hours: int | None
+    # The day-by-day path behind the aggregates above, assembled from the same three simulations the
+    # replays came from. Carried here so a publisher cannot re-simulate and get a series that
+    # disagrees with the Replay Result it is filed beside.
+    series: ReplaySeries
     # Per scored day, in day order: what the Primary Comparison pairs on. Kept because a paired
     # difference needs the days, not the averages — two arms can share a mean and disagree daily.
     predictions: tuple[Prediction, ...]
@@ -260,6 +265,7 @@ def replays_from_walk(
     arm: str,
     model_version: str,
     asset: str = DEFAULT_ASSET,
+    sensitivity: CostSensitivity | None = None,
 ) -> tuple[PublishedReplay, ...]:
     """One Replay Result per Cost Scenario, scored on the walk-forward predictions.
 
@@ -268,7 +274,52 @@ def replays_from_walk(
     second copy of these arguments.
     """
     scored_rows = scored_rows_of(rows, walk)
-    sensitivity = sensitivity_from_walk(rows, walk, contract, arm=arm)
+    # Taken from the caller when it has one, so a run that also publishes the per-day series
+    # simulates each Cost Scenario once. Two simulations of one thing are two chances to differ.
+    #
+    # Which is exactly why `arm` is checked against it rather than trusted. `arm` is what the Replay
+    # Results get filed under; the sensitivity is where their numbers come from. A caller that
+    # passed a sensitivity fit for one arm and named another would publish the second arm's Headline
+    # Metric computed from the first arm's simulation, and nothing downstream could see it.
+    if sensitivity is not None and sensitivity.headline.arm != arm:
+        raise FatalDefect(
+            "sensitivity_arm_mismatch",
+            f"the Cost Sensitivity given was simulated for arm {sensitivity.headline.arm!r} but "
+            f"these Replay Results would be filed under arm {arm!r}",
+        )
+    sensitivity = sensitivity or sensitivity_from_walk(rows, walk, contract, arm=arm)
+    return published_replays_from(
+        sensitivity,
+        asset=asset,
+        arm=arm,
+        model_version=model_version,
+        window_first_day=scored_rows[0].day,
+        window_last_day=scored_rows[-1].day,
+        selection_metric=walk.selection_metric,
+        selection_score=walk.log_loss,
+        contract_digest=contract.digest,
+    )
+
+
+def published_replays_from(
+    sensitivity: CostSensitivity,
+    *,
+    asset: str,
+    arm: str,
+    model_version: str,
+    window_first_day: date,
+    window_last_day: date,
+    selection_metric: str,
+    selection_score: float,
+    contract_digest: str,
+) -> tuple[PublishedReplay, ...]:
+    """Carry each simulated scenario across into the row that gets published, and nothing else.
+
+    Every figure here comes from the `BacktestResult` beside it; none is recomputed. Separate from
+    `replays_from_walk` so that a test can publish a real Cost Sensitivity through *this* mapping
+    and check the published series against the published aggregate — a test that re-listed these
+    assignments would prove the invariant for its own copy, not for the one that ships.
+    """
     return tuple(
         PublishedReplay(
             asset=asset,
@@ -276,8 +327,8 @@ def replays_from_walk(
             model_version=model_version,
             cost_scenario=name,
             is_headline=name == HEADLINE_SCENARIO,
-            window_first_day=scored_rows[0].day,
-            window_last_day=scored_rows[-1].day,
+            window_first_day=window_first_day,
+            window_last_day=window_last_day,
             days=result.days,
             trades=result.trades,
             net_return=result.net_return,
@@ -287,9 +338,9 @@ def replays_from_walk(
             turnover=result.turnover,
             time_invested=result.time_invested,
             total_fees=result.total_fees,
-            selection_metric=walk.selection_metric,
-            selection_score=walk.log_loss,
-            contract_digest=contract.digest,
+            selection_metric=selection_metric,
+            selection_score=selection_score,
+            contract_digest=contract_digest,
         )
         for name, result in sensitivity.by_scenario.items()
     )
@@ -324,8 +375,15 @@ def evaluate_arm(
         contract_digest=contract.digest,
         arm=recorded_arm,
     )
+    sensitivity = sensitivity_from_walk(rows, walk, contract, arm=recorded_arm)
     replays = replays_from_walk(
-        rows, walk, contract, arm=recorded_arm, model_version=release.version, asset=asset
+        rows,
+        walk,
+        contract,
+        arm=recorded_arm,
+        model_version=release.version,
+        asset=asset,
+        sensitivity=sensitivity,
     )
     scored_rows = tuple(
         row for row in rows if row.day in {prediction.day for prediction in walk.predictions}
@@ -352,5 +410,6 @@ def evaluate_arm(
         trial_number=trial.number,
         arm=recorded_arm,
         lag_hours=lag_hours,
+        series=series_from(sensitivity),
         predictions=walk.predictions,
     )

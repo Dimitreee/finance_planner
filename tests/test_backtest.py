@@ -17,7 +17,12 @@ from pathlib import Path
 import psycopg
 import pytest
 from conftest import SNAPSHOT
-from cryptoguard_core.backtest import BASE_SCENARIO, run_backtest, run_cost_sensitivity
+from cryptoguard_core.backtest import (
+    BASE_SCENARIO,
+    BacktestResult,
+    run_backtest,
+    run_cost_sensitivity,
+)
 from cryptoguard_core.contract import load_contract
 from cryptoguard_core.dataset import (
     ARM_A_FEATURES,
@@ -337,3 +342,88 @@ def test_rows_out_of_order_are_refused() -> None:
             initial=GENESIS,
         )
     assert caught.value.kind == "rows_out_of_order"
+
+
+# --- The per-day series, and the aggregates it must reproduce -------------------------------------
+
+
+class TestReplaySeries:
+    """The day-by-day path the panel draws. Its whole worth is that it agrees with the aggregates.
+
+    A curve that ends somewhere other than the published net return, or whose deepest trough is not
+    the published max drawdown, is not a more detailed view of the result — it is a second, quieter
+    result that contradicts the first. So the invariants are asserted rather than assumed, and the
+    aggregates stay the authority: if they disagree, the series is wrong.
+    """
+
+    def rows(self, count: int = 60) -> tuple[DecisionDayRow, ...]:
+        return tuple(
+            DecisionDayRow(
+                day=date(2022, 1, 1) + timedelta(days=index),
+                feature_cutoff_ms=0,
+                anchor_price=100.0 + index,
+                decision_price=100.0 + index,
+                label=1,
+                label_end_ms=0,
+                bars_in_day=24,
+                features=dict.fromkeys(ARM_A_FEATURES, 0.0),
+                news_lag_hours=None,
+            )
+            for index in range(count)
+        )
+
+    def probabilities(self, rows: Sequence[DecisionDayRow]) -> dict[date, float]:
+        # Crosses both thresholds repeatedly, so the series carries BUY, REDUCE and HOLD days.
+        return {row.day: (0.9 if (index // 7) % 2 == 0 else 0.1) for index, row in enumerate(rows)}
+
+    def run(self, rows: Sequence[DecisionDayRow]) -> BacktestResult:
+        return run_backtest(
+            rows,
+            PreviousDirectionBaseline(),
+            PolicyConfig(to_btc_at=0.55, to_usdt_at=0.45),
+            BASE_SCENARIO,
+            initial=Position(usdt=1000.0, btc=0.0),
+            arm="A",
+            probabilities=self.probabilities(rows),
+        )
+
+    def test_there_is_one_row_per_decision_day_in_day_order(self) -> None:
+        rows = self.rows()
+        result = self.run(rows)
+        assert len(result.series) == len(rows) == result.days
+        assert [entry.day for entry in result.series] == [row.day for row in rows]
+
+    def test_each_row_carries_the_five_facts_the_explanation_may_mention(self) -> None:
+        """Day, price, probability, Action and the position it left — and nothing invented."""
+        rows = self.rows()
+        result = self.run(rows)
+        expected = self.probabilities(rows)
+        for row, entry in zip(rows, result.series, strict=True):
+            assert entry.price == row.decision_price
+            assert entry.probability == expected[row.day]
+            assert entry.action in {"BUY", "HOLD", "REDUCE"}
+            assert entry.btc >= 0.0
+            assert entry.usdt >= 0.0
+
+    def test_the_curve_ends_exactly_where_the_published_net_return_says(self) -> None:
+        """The aggregate is the authority. If the last point disagrees, the series is wrong."""
+        result = self.run(self.rows())
+        assert result.series[-1].value_usdt == result.final_value_usdt
+        assert result.series[-1].value_usdt / result.start_value_usdt - 1 == pytest.approx(
+            result.net_return, abs=1e-12
+        )
+
+    def test_the_deepest_trough_of_the_curve_is_the_published_max_drawdown(self) -> None:
+        """Measured from the running peak, with the starting capital as the first peak."""
+        result = self.run(self.rows())
+        peak = result.start_value_usdt
+        worst = 0.0
+        for entry in result.series:
+            peak = max(peak, entry.value_usdt)
+            worst = max(worst, 1.0 - entry.value_usdt / peak)
+        assert worst == pytest.approx(result.max_drawdown, abs=1e-12)
+
+    def test_the_actions_in_the_series_are_the_trades_that_were_counted(self) -> None:
+        """A trade in the count and a marked day on the chart have to be the same event."""
+        result = self.run(self.rows())
+        assert sum(1 for entry in result.series if entry.action != "HOLD") == result.trades

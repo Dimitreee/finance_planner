@@ -14,9 +14,17 @@ export interface Advice {
   probability: number | null;
   action: Action | null;
   target_exposure: number | null;
-  position: { btc: number | null; usdt: number | null; value_usdt: number | null };
+  position: {
+    btc: number | null;
+    usdt: number | null;
+    value_usdt: number | null;
+  };
   explanation: string | null;
-  versions: { model: string | null; policy: string | null; contract: string | null };
+  versions: {
+    model: string | null;
+    policy: string | null;
+    contract: string | null;
+  };
 }
 
 export interface TrackPoint {
@@ -66,3 +74,36 @@ async function getJson<T>(path: string): Promise<T> {
 export const fetchAdvice = () => getJson<Advice>("/api/advice");
 export const fetchPaperTrack = () => getJson<PaperTrack>("/api/paper-track");
 export const fetchReplay = () => getJson<Replay>("/api/replay");
+
+/** One Decision Day of the published Replay: what was decided, the same under every Cost Scenario. */
+export interface SeriesDay {
+  day: string;
+  price: number;
+  probability: number;
+  action: Action;
+}
+
+/** What one Cost Scenario's money did on one day. Cash is absent: it is the flat start capital. */
+export interface SeriesScenarioDay {
+  day: string;
+  btc: number;
+  usdt: number;
+  value_usdt: number;
+  buy_and_hold_usdt: number;
+}
+
+export interface ReplaySeries {
+  asset: string;
+  model_mode: string | null;
+  model_version: string | null;
+  window: { first_day: string; last_day: string; days: number } | null;
+  start_value_usdt: number | null;
+  headline_scenario: string | null;
+  /** Served, not assumed: a hard-coded switcher outlives a scenario the contract dropped. */
+  cost_scenarios: string[];
+  days: SeriesDay[];
+  scenarios: Record<string, SeriesScenarioDay[]>;
+}
+
+export const fetchReplaySeries = () =>
+  getJson<ReplaySeries>("/api/replay-series");

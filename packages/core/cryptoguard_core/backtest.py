@@ -19,12 +19,14 @@ from cryptoguard_core.model import ModelRelease
 from cryptoguard_core.policy import (
     COST_SCENARIOS,
     HEADLINE_SCENARIO,
+    Action,
     CostScenario,
     PolicyConfig,
     Position,
     decide_target_exposure,
     rebalance,
 )
+from cryptoguard_core.replay import ReplaySeries, SeriesDay, SeriesScenarioDay
 
 BASE_SCENARIO = COST_SCENARIOS[HEADLINE_SCENARIO]
 
@@ -39,6 +41,25 @@ ARM_FEATURES: Mapping[str, tuple[str, ...]] = MappingProxyType(
     {arm.upper(): features for arm, features in FEATURES_BY_ARM.items()}
 )
 DEFAULT_ARM = "A"
+
+
+@dataclass(frozen=True, slots=True)
+class ReplayDay:
+    """One Decision Day of a replay: what was decided, and what the portfolio was worth after it.
+
+    The first four fields are the decision facts the Explanation may mention — the day, the price it
+    saw, the probability, and the Action — and the last three are what they produced: the position
+    held afterwards and what that position was worth. Seven fields, and nothing else. A chart that
+    could show an eighth would be showing something the advice never told the reader.
+    """
+
+    day: date
+    price: float
+    probability: float
+    action: Action
+    btc: float
+    usdt: float
+    value_usdt: float
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,6 +83,10 @@ class BacktestResult:
     start_value_usdt: float
     value_series: tuple[float, ...]
     buy_and_hold_series: tuple[float, ...]
+    # The day-by-day path, in day order. The aggregates above stay the authority: a series ending
+    # somewhere other than `final_value_usdt`, or whose deepest trough is not `max_drawdown`, is a
+    # second and quieter result contradicting the first, and a test refuses it rather than average.
+    series: tuple[ReplayDay, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -152,6 +177,7 @@ def run_backtest(
 
     position = initial
     values: list[float] = []
+    series: list[ReplayDay] = []
     fees = 0.0
     traded_notional = 0.0
     trades = 0
@@ -178,7 +204,19 @@ def run_backtest(
         traded_notional += result.notional
         trades += result.action != "HOLD"
         invested_days += position.btc > 0
-        values.append(position.value(row.decision_price))
+        value = position.value(row.decision_price)
+        values.append(value)
+        series.append(
+            ReplayDay(
+                day=row.day,
+                price=row.decision_price,
+                probability=probability,
+                action=result.action,
+                btc=position.btc,
+                usdt=position.usdt,
+                value_usdt=value,
+            )
+        )
 
     final_value = values[-1]
 
@@ -205,6 +243,7 @@ def run_backtest(
         start_value_usdt=start_value,
         value_series=tuple(values),
         buy_and_hold_series=tuple(buy_and_hold_values),
+        series=tuple(series),
     )
 
 
@@ -253,6 +292,76 @@ def excess_return(days: Sequence[DailyReturns]) -> float:
     strategy = math.exp(math.fsum(day.strategy for day in days)) - 1
     held = math.exp(math.fsum(day.buy_and_hold for day in days)) - 1
     return strategy - held
+
+
+def series_from(sensitivity: CostSensitivity) -> ReplaySeries:
+    """Fold three simulations into one series, refusing if they disagree about a decision.
+
+    The three ran over the same rows with the same probabilities, so their decision facts must match
+    day for day. A disagreement means something other than costs differed between the runs, and a
+    switcher built on top of that would show a reader an Action that flips when they change a fee.
+    """
+    headline = sensitivity.headline.series
+    if not headline:
+        raise FatalDefect(
+            "replay_series_empty", "the headline scenario produced no days to assemble"
+        )
+
+    for name, result in sensitivity.by_scenario.items():
+        if len(result.series) != len(headline):
+            raise FatalDefect(
+                "replay_series_disagrees",
+                f"scenario {name!r} has {len(result.series)} days and the headline has "
+                f"{len(headline)}; they were meant to run over the same rows",
+            )
+        if result.start_value_usdt != sensitivity.headline.start_value_usdt:
+            raise FatalDefect(
+                "replay_series_disagrees",
+                f"scenario {name!r} starts from {result.start_value_usdt} and the headline from "
+                f"{sensitivity.headline.start_value_usdt}; three curves from different capital "
+                "compare nothing",
+            )
+        for mine, theirs in zip(result.series, headline, strict=True):
+            decided = (mine.day, mine.price, mine.probability, mine.action)
+            expected = (theirs.day, theirs.price, theirs.probability, theirs.action)
+            if decided != expected:
+                raise FatalDefect(
+                    "replay_series_disagrees",
+                    f"scenario {name!r} decided {decided} where the headline decided {expected}; "
+                    "costs may change what the portfolio is worth, never what the Policy decided",
+                )
+
+    return ReplaySeries(
+        first_day=headline[0].day,
+        last_day=headline[-1].day,
+        start_value_usdt=sensitivity.headline.start_value_usdt,
+        headline_scenario=HEADLINE_SCENARIO,
+        days=tuple(
+            SeriesDay(
+                day=entry.day,
+                price=entry.price,
+                probability=entry.probability,
+                action=entry.action,
+            )
+            for entry in headline
+        ),
+        by_scenario=MappingProxyType(
+            {
+                name: tuple(
+                    SeriesScenarioDay(
+                        day=entry.day,
+                        cost_scenario=name,
+                        btc=entry.btc,
+                        usdt=entry.usdt,
+                        value_usdt=entry.value_usdt,
+                        buy_and_hold_usdt=held,
+                    )
+                    for entry, held in zip(result.series, result.buy_and_hold_series, strict=True)
+                )
+                for name, result in sensitivity.by_scenario.items()
+            }
+        ),
+    )
 
 
 def run_cost_sensitivity(

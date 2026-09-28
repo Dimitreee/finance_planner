@@ -106,6 +106,71 @@ def create_app(
             ],
         }
 
+    @app.get("/api/replay-series")
+    def replay_series() -> dict[str, Any]:
+        """The day-by-day Replay behind the aggregates, for the curves and the underwater view.
+
+        Its `model_mode` and `model_version` come from the aggregates rather than the series, so a
+        reader can never be shown a curve belonging to one model beside figures from another. The
+        Cost Scenario names are served rather than assumed by the page: a switcher hard-coding
+        them would keep offering a scenario the contract had dropped.
+        """
+        series = published.latest_replay_series(asset)
+        scenarios = published.latest_replay(asset)
+        first = scenarios[0] if scenarios else None
+        # The unpublished shape first, and the published one as an overlay on it. Written as two
+        # complete dicts it was two hand-maintained key sets, and the failure they permit is silent:
+        # a key added to one and forgotten in the other makes a field the page can read on a normal
+        # day and cannot read on an empty one, which is the day nobody tests by hand.
+        #
+        # Nulls rather than zeros for the three scalars. A window of zero days and a starting
+        # capital # of 0 are both readable as measurements, and neither was measured.
+        empty: dict[str, Any] = {
+            "asset": asset,
+            "model_mode": first.model_mode if first else None,
+            "model_version": first.model_version if first else None,
+            "window": None,
+            "start_value_usdt": None,
+            "headline_scenario": None,
+            "cost_scenarios": [],
+            "days": [],
+            "scenarios": {},
+        }
+        if series is None:
+            return empty
+        return empty | {
+            "window": {
+                "first_day": series.first_day.isoformat(),
+                "last_day": series.last_day.isoformat(),
+                "days": len(series.days),
+            },
+            "start_value_usdt": series.start_value_usdt,
+            "headline_scenario": series.headline_scenario,
+            "cost_scenarios": sorted(series.by_scenario),
+            "days": [
+                {
+                    "day": entry.day.isoformat(),
+                    "price": entry.price,
+                    "probability": entry.probability,
+                    "action": entry.action,
+                }
+                for entry in series.days
+            ],
+            "scenarios": {
+                name: [
+                    {
+                        "day": value.day.isoformat(),
+                        "btc": value.btc,
+                        "usdt": value.usdt,
+                        "value_usdt": value.value_usdt,
+                        "buy_and_hold_usdt": value.buy_and_hold_usdt,
+                    }
+                    for value in values
+                ]
+                for name, values in series.by_scenario.items()
+            },
+        }
+
     @app.get("/api/replay")
     def replay() -> dict[str, Any]:
         scenarios = published.latest_replay(asset)

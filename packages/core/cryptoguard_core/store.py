@@ -12,10 +12,12 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
+from types import MappingProxyType
 
 import psycopg
 
 from cryptoguard_core.policy import Action, Position
+from cryptoguard_core.replay import ReplaySeries, SeriesDay, SeriesScenarioDay
 
 MIGRATIONS_DIR = Path(__file__).resolve().parents[3] / "migrations"
 
@@ -289,6 +291,128 @@ class RunStore:
                 (asset, asset),
             ).fetchall()
         return tuple(PublishedReplay(*row) for row in rows)
+
+    def publish_replay_series(
+        self, asset: str, model_version: str, series: ReplaySeries
+    ) -> tuple[int, int]:
+        """Write the day-by-day Replay. An already-published series is left exactly as it is.
+
+        Returns the counts of decision days and scenario-days actually written, so a caller can say
+        whether this run published anything or found the series already there. Published once for
+        the same reason the aggregates are: the daily job must not be able to move a frozen result.
+        """
+        days_written = 0
+        scenario_written = 0
+        with self._connect() as connection:
+            connection.execute(
+                "INSERT INTO replay_series"
+                " (asset, model_version, first_day, last_day, start_value_usdt, headline_scenario)"
+                " VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING",
+                (
+                    asset,
+                    model_version,
+                    series.first_day,
+                    series.last_day,
+                    series.start_value_usdt,
+                    series.headline_scenario,
+                ),
+            )
+            for entry in series.days:
+                row = connection.execute(
+                    "INSERT INTO replay_days"
+                    " (asset, model_version, day, price, probability, action)"
+                    " VALUES (%s, %s, %s, %s, %s, %s)"
+                    " ON CONFLICT DO NOTHING RETURNING day",
+                    (asset, model_version, entry.day, entry.price, entry.probability, entry.action),
+                ).fetchone()
+                days_written += row is not None
+            for scenario in series.by_scenario.values():
+                for value in scenario:
+                    row = connection.execute(
+                        "INSERT INTO replay_scenario_days"
+                        " (asset, model_version, cost_scenario, day, btc, usdt, value_usdt,"
+                        "  buy_and_hold_usdt)"
+                        " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                        " ON CONFLICT DO NOTHING RETURNING day",
+                        (
+                            asset,
+                            model_version,
+                            value.cost_scenario,
+                            value.day,
+                            value.btc,
+                            value.usdt,
+                            value.value_usdt,
+                            value.buy_and_hold_usdt,
+                        ),
+                    ).fetchone()
+                    scenario_written += row is not None
+            connection.commit()
+        return days_written, scenario_written
+
+    def latest_replay_series(self, asset: str) -> ReplaySeries | None:
+        """The day-by-day Replay of the most recently published backtest, or None if there is none.
+
+        The model version comes from `published_replays`, not from these tables, so the series a
+        reader sees always belongs to the aggregates printed beside it. A series reachable without
+        its aggregates is the failure worth making unreachable.
+        """
+        with self._connect() as connection:
+            version_row = connection.execute(
+                "SELECT model_version FROM published_replays WHERE asset = %s"
+                " ORDER BY published_at DESC, id DESC LIMIT 1",
+                (asset,),
+            ).fetchone()
+            if version_row is None:
+                return None
+            model_version = str(version_row[0])
+            header = connection.execute(
+                "SELECT first_day, last_day, start_value_usdt, headline_scenario"
+                " FROM replay_series"
+                " WHERE asset = %s AND model_version = %s",
+                (asset, model_version),
+            ).fetchone()
+            if header is None:
+                return None
+            day_rows = connection.execute(
+                "SELECT day, price, probability, action FROM replay_days"
+                " WHERE asset = %s AND model_version = %s ORDER BY day",
+                (asset, model_version),
+            ).fetchall()
+            scenario_rows = connection.execute(
+                "SELECT cost_scenario, day, btc, usdt, value_usdt, buy_and_hold_usdt"
+                " FROM replay_scenario_days WHERE asset = %s AND model_version = %s"
+                " ORDER BY cost_scenario, day",
+                (asset, model_version),
+            ).fetchall()
+
+        by_scenario: dict[str, list[SeriesScenarioDay]] = {}
+        for name, day, btc, usdt, value_usdt, held in scenario_rows:
+            by_scenario.setdefault(str(name), []).append(
+                SeriesScenarioDay(
+                    day=day,
+                    cost_scenario=str(name),
+                    btc=float(btc),
+                    usdt=float(usdt),
+                    value_usdt=float(value_usdt),
+                    buy_and_hold_usdt=float(held),
+                )
+            )
+        first_day, last_day, start_value_usdt, headline_scenario = header
+        return ReplaySeries(
+            first_day=first_day,
+            last_day=last_day,
+            start_value_usdt=float(start_value_usdt),
+            headline_scenario=str(headline_scenario),
+            days=tuple(
+                SeriesDay(
+                    day=day, price=float(price), probability=float(probability), action=action
+                )
+                for day, price, probability, action in day_rows
+            ),
+            by_scenario=MappingProxyType(
+                {name: tuple(values) for name, values in sorted(by_scenario.items())}
+            ),
+        )
 
     def publish(self, run: PublishedRun) -> bool:
         """Write the run and its position transition. False means this key was already published."""

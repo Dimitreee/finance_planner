@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
-import { advice, replay, track } from "./fixtures";
+import { advice, replay, replaySeries, track } from "./fixtures";
 
 afterEach(() => {
   vi.useRealTimers();
@@ -16,7 +16,9 @@ function stubApi(): () => number {
       calls += 1;
       const body = url.includes("paper-track")
         ? track()
-        : url.includes("replay")
+        : url.includes("replay-series")
+          ? replaySeries()
+          : url.includes("replay")
           ? replay()
           : advice();
       return { ok: true, json: async () => body } as Response;

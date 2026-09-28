@@ -40,7 +40,7 @@ export function PriceChart({ points }: { points: TrackPoint[] }) {
         aria-label={`BTC/USDT price across ${points.length} published days`}
         data-testid="price-chart"
       >
-        <polyline points={coordinates.join(" ")} fill="none" />
+        <polyline className="series series--market" points={coordinates.join(" ")} fill="none" />
       </svg>
       <figcaption>
         BTC/USDT, {formatDay(first.day)} to {formatDay(last.day)}

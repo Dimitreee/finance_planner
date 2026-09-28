@@ -250,13 +250,6 @@ body {
 /* A <figure> carries a 40px browser default margin on each side: a quarter of a 320px screen. */
 .chart { margin: 0; }
 .chart svg { width: 100%; height: 10rem; display: block; }
-.chart polyline {
-  /* The market keeps the market's colour, here and in every panel that draws it. */
-  stroke: var(--series-market);
-  stroke-width: 2;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
 .chart figcaption { margin-top: var(--space-2); color: var(--muted); font-size: var(--text-sm); }
 .chart--empty { color: var(--muted); }
 
@@ -312,6 +305,49 @@ body {
 .swatch--strategy { background: var(--series-strategy); }
 .swatch--market { background: var(--series-market); }
 .swatch--cash { background: var(--series-cash); }
+
+/* Exactly the pre-registered scenarios, and no field a reader could type a rate into. */
+.switcher {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  margin: 0 0 var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+.switcher legend { color: var(--muted); font-size: var(--text-sm); padding-inline: var(--space-1); }
+.switcher__option { display: inline-flex; align-items: center; gap: var(--space-2); cursor: pointer; }
+
+/* Two or more lines means a legend is always present, so identity is never colour alone. */
+.legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+.legend li { display: inline-flex; align-items: center; }
+
+/* Every drawn series takes its geometry here and its colour from exactly one `.series--*` rule
+   below. There is deliberately no `.chart polyline` default: a type-plus-class selector outranks a
+   single class, so a colour set there would silently win over every identity rule and draw all
+   three curves alike. `restyle.test.tsx` holds that shut. */
+.series { fill: none; stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.series--strategy { stroke: var(--series-strategy); }
+.series--market { stroke: var(--series-market); }
+/* Cash never moves, so it is drawn as the reference it is rather than as a third contender. */
+.series--cash { stroke: var(--series-cash); stroke-dasharray: 4 4; }
+
+.chart__marker {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  vector-effect: non-scaling-stroke;
+}
 
 /* The other sentence the page exists to make unmissable. A finding, not an error: it is warned, not
    alarmed, and it always ships with words rather than colour alone. */
