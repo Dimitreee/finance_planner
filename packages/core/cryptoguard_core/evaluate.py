@@ -17,14 +17,23 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
-from cryptoguard_core.backtest import run_cost_sensitivity
+from cryptoguard_core.backtest import CostSensitivity, run_cost_sensitivity
 from cryptoguard_core.contract import ExperimentContract
-from cryptoguard_core.dataset import ARMS_NEEDING_NEWS, FEATURES_BY_ARM, DecisionDayRow
+from cryptoguard_core.dataset import (
+    ARMS_NEEDING_NEWS,
+    ARMS_NEEDING_SENTIMENT,
+    FEATURES_BY_ARM,
+    DecisionDayRow,
+    build_decision_day_rows,
+)
 from cryptoguard_core.decide import DEFAULT_ASSET, genesis_from, policy_from
-from cryptoguard_core.ingest import FatalDefect
+from cryptoguard_core.ingest import Bar, FatalDefect
 from cryptoguard_core.model import PreviousDirectionBaseline
+from cryptoguard_core.news import ARCHIVE_COVERS_THROUGH_MS, NewsItem
+from cryptoguard_core.news_features import headline_availability
 from cryptoguard_core.policy import HEADLINE_SCENARIO
 from cryptoguard_core.release import LogisticRelease
+from cryptoguard_core.sentiment import READINGS_CACHE, ReadingCache, news_signal
 from cryptoguard_core.store import PublishedReplay
 from cryptoguard_core.training import (
     Fold,
@@ -101,6 +110,37 @@ def _holdout_first_day(contract: ExperimentContract) -> date:
     if not isinstance(first, date):
         raise FatalDefect("contract_inconsistent", "splits.final_holdout_first_day must be a date")
     return first
+
+
+def arm_rows(
+    arm: str,
+    lag_hours: int | None,
+    bars: Sequence[Bar],
+    items: Sequence[NewsItem],
+    *,
+    last_day: date,
+) -> tuple[DecisionDayRow, ...]:
+    """Rows for one arm under one lag, stopping at `last_day`.
+
+    The routing matters and is easy to get wrong in a second copy: Arm B is handed availability
+    instants alone, and Arm C the same instants with a Sentiment Score beside each. Handing B the
+    scores builds a column it does not declare, which `build_decision_day_rows` refuses — loud,
+    but only if this decision exists in one place to make.
+    """
+    if lag_hours is None:
+        return build_decision_day_rows(bars, arm=arm, last_day=last_day)
+    if arm in ARMS_NEEDING_SENTIMENT:
+        news = news_signal(
+            items,
+            lag_hours=lag_hours,
+            covers_through_ms=ARCHIVE_COVERS_THROUGH_MS,
+            cache=ReadingCache(READINGS_CACHE),
+        )
+    else:
+        news = headline_availability(
+            items, lag_hours=lag_hours, covers_through_ms=ARCHIVE_COVERS_THROUGH_MS
+        )
+    return build_decision_day_rows(bars, arm=arm, last_day=last_day, news=news)
 
 
 def development_last_day(contract: ExperimentContract) -> date:
@@ -181,6 +221,37 @@ def walk_arm(
     )
 
 
+def scored_rows_of(
+    rows: Sequence[DecisionDayRow], walk: WalkForwardResult
+) -> tuple[DecisionDayRow, ...]:
+    """The rows the walk actually scored. One definition, because two would be free to disagree."""
+    scored = {prediction.day for prediction in walk.predictions}
+    return tuple(row for row in rows if row.day in scored)
+
+
+def sensitivity_from_walk(
+    rows: Sequence[DecisionDayRow],
+    walk: WalkForwardResult,
+    contract: ExperimentContract,
+    *,
+    arm: str,
+) -> CostSensitivity:
+    """Every Cost Scenario simulated on the walk-forward predictions, for one arm.
+
+    The one place a Replay Result is produced, so a caller that spends no Trial — the Bootstrap
+    Intervals, say — describes the *same* simulation the published Replay came from. A second copy
+    of these arguments could drift from the published number while claiming to describe it.
+    """
+    return run_cost_sensitivity(
+        scored_rows_of(rows, walk),
+        PreviousDirectionBaseline(),  # unused: the recorded predictions take precedence
+        policy_from(contract),
+        initial=genesis_from(contract),
+        arm=arm,
+        probabilities={p.day: p.probability for p in walk.predictions},
+    )
+
+
 def replays_from_walk(
     rows: Sequence[DecisionDayRow],
     walk: WalkForwardResult,
@@ -196,17 +267,8 @@ def replays_from_walk(
     of an arm already on the record is computed by the same path as a new arm's rather than by a
     second copy of these arguments.
     """
-    scored_days = {prediction.day for prediction in walk.predictions}
-    scored_rows = tuple(row for row in rows if row.day in scored_days)
-    probabilities = {prediction.day: prediction.probability for prediction in walk.predictions}
-    sensitivity = run_cost_sensitivity(
-        scored_rows,
-        PreviousDirectionBaseline(),  # unused: the recorded predictions take precedence
-        policy_from(contract),
-        initial=genesis_from(contract),
-        arm=arm,
-        probabilities=probabilities,
-    )
+    scored_rows = scored_rows_of(rows, walk)
+    sensitivity = sensitivity_from_walk(rows, walk, contract, arm=arm)
     return tuple(
         PublishedReplay(
             asset=asset,

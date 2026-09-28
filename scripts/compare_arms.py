@@ -23,24 +23,21 @@ import argparse
 import json
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import date
 from pathlib import Path
 
 from cryptoguard_core.comparison import PairedComparison, paired_log_loss_difference
-from cryptoguard_core.contract import ExperimentContract, load_contract
-from cryptoguard_core.dataset import DecisionDayRow, build_decision_day_rows
+from cryptoguard_core.contract import ExperimentContract, contract_value, load_contract
 from cryptoguard_core.evaluate import (
     Evaluation,
+    arm_rows,
     development_last_day,
     evaluate_arm,
     replays_from_walk,
     walk_arm,
 )
-from cryptoguard_core.ingest import Bar, FatalDefect, load_archive_backfill
+from cryptoguard_core.ingest import FatalDefect, load_archive_backfill
 from cryptoguard_core.metrics import NO_SKILL_LOG_LOSS
-from cryptoguard_core.news import ARCHIVE_COVERS_THROUGH_MS, NEWS_CSV, NewsItem, read_news_items
-from cryptoguard_core.news_features import HeadlineAvailability, headline_availability
-from cryptoguard_core.sentiment import READINGS_CACHE, ReadingCache, news_signal
+from cryptoguard_core.news import NEWS_CSV, read_news_items
 from cryptoguard_core.store import PublishedReplay
 from cryptoguard_core.training import Prediction, WalkForwardResult
 from cryptoguard_core.trials import TrialLog
@@ -146,59 +143,6 @@ def already_fitted(trials: TrialLog, arm: str, lag_hours: int) -> int | None:
         if entry.corrects is None and entry.arm == arm.upper() and entry.lag_hours == lag_hours:
             return entry.number
     return None
-
-
-def news_for(arm: str, lag_hours: int, items: Sequence[NewsItem]) -> HeadlineAvailability:
-    """Headline availability under one lag, carrying Sentiment Scores only where an arm reads them.
-
-    Arm B is handed instants alone. Handing it scores would build a column it does not declare, and
-    `build_decision_day_rows` refuses exactly that.
-    """
-    if arm == "c":
-        return news_signal(
-            items,
-            lag_hours=lag_hours,
-            covers_through_ms=ARCHIVE_COVERS_THROUGH_MS,
-            cache=ReadingCache(READINGS_CACHE),
-        )
-    return headline_availability(
-        items, lag_hours=lag_hours, covers_through_ms=ARCHIVE_COVERS_THROUGH_MS
-    )
-
-
-def build_rows(
-    arm: str,
-    lag_hours: int | None,
-    bars: Sequence[Bar],
-    items: Sequence[NewsItem],
-    *,
-    last_day: date,
-) -> tuple[DecisionDayRow, ...]:
-    """Rows for one arm, stopping at `last_day` — the Development Period's end, never later.
-
-    The folds already stop at 2024-12-31, so rows past it were never fitted or scored. Building them
-    anyway left Final Holdout dates in the same process as the comparison, one edit away from being
-    scored. Verified before the restriction was added: the walk over the shorter build returns the
-    identical 1 096 predictions and the identical log loss, so this narrows what is touched without
-    moving a single number (ADR-0018).
-    """
-    if lag_hours is None:
-        return build_decision_day_rows(bars, arm=arm, last_day=last_day)
-    return build_decision_day_rows(
-        bars, arm=arm, last_day=last_day, news=news_for(arm, lag_hours, items)
-    )
-
-
-def contract_value(contract: ExperimentContract, section: str, key: str) -> object:
-    """One contract value, or a named refusal. A `KeyError` traceback is not a refusal."""
-    try:
-        return contract.values[section][key]
-    except KeyError:
-        raise FatalDefect(
-            "contract_inconsistent",
-            f"the contract has no {section}.{key}; this script reads it and cannot proceed without "
-            "it",
-        ) from None
 
 
 def promoted_version(releases_dir: Path) -> str:
@@ -343,7 +287,7 @@ def main() -> None:
     items = list(read_news_items(NEWS_CSV))
 
     # The baseline, re-derived and checked against the record. No Trial: this number is Trial 1.
-    baseline_rows = build_rows(BASELINE_ARM, None, bars, items, last_day=last_day)
+    baseline_rows = arm_rows(BASELINE_ARM, None, bars, items, last_day=last_day)
     baseline_walk = walk_arm(baseline_rows, contract, arm=BASELINE_ARM)
     on_record = recorded_arm_a_score(trials)
     if abs(baseline_walk.log_loss - on_record) > 1e-12:
@@ -375,7 +319,7 @@ def main() -> None:
     for arm, lag in pairs:
         if already_fitted(trials, arm, lag) is not None:
             continue
-        rows = build_rows(arm, lag, bars, items, last_day=last_day)
+        rows = arm_rows(arm, lag, bars, items, last_day=last_day)
         evaluation = evaluate_arm(
             rows, contract, trials, arm=arm, lag_hours=lag, releases_dir=arguments.releases
         )

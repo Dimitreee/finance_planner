@@ -158,6 +158,12 @@ compare: ## Fit arms B and C across the lag grid and answer the Primary Comparis
 	@# refuses to start unless the remaining budget covers every pair. --dry-run prints the plan.
 	uv run python scripts/compare_arms.py
 
+.PHONY: intervals
+intervals: ## Bootstrap Intervals for the Primary Comparison and the Headline Metric
+	@# Spends no Trial: it re-derives results already on the record and estimates uncertainty around
+	@# them. Takes several minutes at the pre-registered 10 000 resamples.
+	uv run python scripts/bootstrap_intervals.py
+
 .PHONY: decide
 decide: guard-day guard-db-url ## Publish one Decision Day, e.g. make decide DAY=2026-02-01
 	uv run cryptoguard-job decide --day $(DAY)

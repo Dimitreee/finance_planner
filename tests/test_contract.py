@@ -23,6 +23,13 @@ from cryptoguard_core.annotation import (
     WORDING_WHEN_NOT,
     WORDING_WHEN_TRANSFERS,
 )
+from cryptoguard_core.bootstrap import (
+    BLOCK_DAYS,
+    BLOCK_RULE,
+    SEED,
+    SENSITIVITY_BLOCK_DAYS,
+    STABILITY_SEEDS,
+)
 from cryptoguard_core.contract import (
     CONTRACT_PATH,
     DatasetManifest,
@@ -505,3 +512,58 @@ def test_a_second_annotator_is_not_refused_by_the_contract(tmp_path: Path) -> No
     amended = tmp_path / "experiment.yaml"
     amended.write_text(text, encoding="utf-8")
     assert load_contract(amended).values["annotation"]["annotators"] == 2
+
+
+def test_the_contract_pins_the_bootstrap_to_the_code(tmp_path: Path) -> None:
+    """A block length the code does not implement would misdescribe every interval."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        f"  bootstrap_block_days: {BLOCK_DAYS}", "  bootstrap_block_days: 13", 1
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+
+
+def test_a_block_rule_the_sampler_does_not_implement_is_refused(tmp_path: Path) -> None:
+    """The wrap-or-truncate choice is the one a test pins; the file may not claim the other."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        f"  bootstrap_block_rule: {BLOCK_RULE}", "  bootstrap_block_rule: truncate_only", 1
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+
+
+def test_a_stability_seed_equal_to_the_reported_seed_is_refused(tmp_path: Path) -> None:
+    """A stability check at the seed being checked would report agreement with itself."""
+    stated = ", ".join(str(seed) for seed in STABILITY_SEEDS)
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        f"  bootstrap_stability_seeds: [{stated}]",
+        f"  bootstrap_stability_seeds: [{SEED}, {STABILITY_SEEDS[0]}]",
+        1,
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+
+
+def test_the_reported_block_length_may_not_also_be_a_sensitivity_row(tmp_path: Path) -> None:
+    """Repeating the reported length as a sensitivity row would print the same interval twice and
+    call one of them a sensitivity analysis."""
+    stated = ", ".join(str(days) for days in SENSITIVITY_BLOCK_DAYS)
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        f"  bootstrap_sensitivity_block_days: [{stated}]",
+        f"  bootstrap_sensitivity_block_days: [{SENSITIVITY_BLOCK_DAYS[0]}, {BLOCK_DAYS}]",
+        1,
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"

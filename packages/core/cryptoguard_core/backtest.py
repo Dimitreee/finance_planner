@@ -7,6 +7,7 @@ merely resembles it.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
@@ -54,7 +55,13 @@ class BacktestResult:
     max_drawdown: float
     cash_return: float
     buy_and_hold_return: float
+    # The portfolio's value after each Decision Day, and the same for holding from day one. Both
+    # are kept because the Bootstrap Interval resamples the daily path, and a bootstrap over an
+    # aggregate has nothing to resample. The first day's return is measured against
+    # `start_value_usdt`.
+    start_value_usdt: float
     value_series: tuple[float, ...]
+    buy_and_hold_series: tuple[float, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -177,7 +184,8 @@ def run_backtest(
 
     # Both baselines start from the same capital on the same first day. Cash simply holds it.
     held = rebalance(initial, 1.0, rows[0].decision_price, costs).position_after
-    buy_and_hold_value = held.value(rows[-1].decision_price)
+    buy_and_hold_values = [held.value(row.decision_price) for row in rows]
+    buy_and_hold_value = buy_and_hold_values[-1]
 
     return BacktestResult(
         arm=arm,
@@ -194,8 +202,57 @@ def run_backtest(
         max_drawdown=_max_drawdown([start_value, *values]),
         cash_return=0.0,
         buy_and_hold_return=buy_and_hold_value / start_value - 1,
+        start_value_usdt=start_value,
         value_series=tuple(values),
+        buy_and_hold_series=tuple(buy_and_hold_values),
     )
+
+
+@dataclass(frozen=True, slots=True)
+class DailyReturns:
+    """One Decision Day's log return for the strategy and for holding, which travel together."""
+
+    strategy: float
+    buy_and_hold: float
+
+
+def daily_log_returns(result: BacktestResult) -> tuple[DailyReturns, ...]:
+    """One (strategy, buy-and-hold) pair of log returns per Decision Day, in day order.
+
+    Log returns rather than simple ones because the Bootstrap Interval resamples them and then
+    compounds: a sum of logs is the product of the ratios, so a resample of the same days in
+    another order reproduces the same total. A test pins the decomposition to the published
+    aggregates, which is what stops the interval covering a quantity next to the one reported.
+    """
+    strategy = _log_steps(result.start_value_usdt, result.value_series, "the portfolio")
+    held = _log_steps(result.start_value_usdt, result.buy_and_hold_series, "buy-and-hold")
+    return tuple(
+        DailyReturns(strategy=one, buy_and_hold=other)
+        for one, other in zip(strategy, held, strict=True)
+    )
+
+
+def _log_steps(start: float, series: Sequence[float], what: str) -> list[float]:
+    values = [start, *series]
+    for value in values:
+        if value <= 0:
+            raise FatalDefect(
+                "degenerate_window",
+                f"{what} reaches {value} and a log return of it does not exist",
+            )
+    return [math.log(later / earlier) for earlier, later in zip(values, values[1:], strict=False)]
+
+
+def excess_return(days: Sequence[DailyReturns]) -> float:
+    """Net cumulative return after costs minus buy-and-hold's, over the days given.
+
+    A difference rather than two numbers, because that is the quantity whose interval can span
+    zero — and an interval spanning zero is Inconclusive, not a small edge (ADR-0017). It selects
+    nothing.
+    """
+    strategy = math.exp(math.fsum(day.strategy for day in days)) - 1
+    held = math.exp(math.fsum(day.buy_and_hold for day in days)) - 1
+    return strategy - held
 
 
 def run_cost_sensitivity(

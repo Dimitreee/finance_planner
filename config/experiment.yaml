@@ -127,9 +127,21 @@ evaluation:
   primary_comparison: arm_c_vs_arm_a
   secondary_forecast_metrics: [brier, accuracy, calibration_curve]
   secondary_decision_metrics: [max_drawdown, turnover, trades, time_invested]
+  # ADR-0017. Blocks keep a day's neighbours travelling with it: a trending series resampled day by
+  # day reports itself steadier than it is. Pinned to the constants in cryptoguard_core.bootstrap.
+  #   wrap_and_truncate = a block running past the end wraps to the front, and the last block drawn
+  #   is cut so a resample is exactly as long as the original.
+  # The seed, the resample count and the confidence were added in ticket 05, after the arm results
+  # were already measured. They select nothing — the bootstrap spends no Trial and ranks no arm — and
+  # the conclusion is reported as invariant across seeds rather than asserted at one of them.
   bootstrap_kind: moving_block
   bootstrap_block_days: 20
   bootstrap_sensitivity_block_days: [5, 40]
+  bootstrap_block_rule: wrap_and_truncate
+  bootstrap_resamples: 10000
+  bootstrap_seed: 20260928
+  bootstrap_confidence: 0.95
+  bootstrap_stability_seeds: [20260929, 20260930, 20261001, 20261002]
 
 trials:
   budget: 12

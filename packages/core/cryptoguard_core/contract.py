@@ -32,6 +32,15 @@ from cryptoguard_core.annotation import (
     WORDING_WHEN_NOT,
     WORDING_WHEN_TRANSFERS,
 )
+from cryptoguard_core.bootstrap import (
+    BLOCK_DAYS,
+    BLOCK_RULE,
+    CONFIDENCE,
+    RESAMPLES,
+    SEED,
+    SENSITIVITY_BLOCK_DAYS,
+    STABILITY_SEEDS,
+)
 from cryptoguard_core.dataset import (
     ARM_A_FEATURES,
     ARMS_NEEDING_NEWS,
@@ -101,6 +110,21 @@ def _freeze(node: Any) -> Any:
     if isinstance(node, list):
         return tuple(_freeze(value) for value in node)
     return node
+
+
+def contract_value(contract: ExperimentContract, section: str, key: str) -> Any:
+    """One contract value, or a named refusal. A `KeyError` traceback is not a refusal.
+
+    Here rather than in a script because every reader of the contract needs it, and the second copy
+    is how one caller ends up handing a traceback to a person who only mistyped a section name.
+    """
+    try:
+        return contract.values[section][key]
+    except KeyError:
+        raise FatalDefect(
+            "contract_inconsistent",
+            f"the contract has no {section}.{key}, and a caller is reading it",
+        ) from None
 
 
 def deep_unfreeze(node: Any) -> Any:
@@ -227,6 +251,42 @@ def _check(values: Mapping[str, Any]) -> None:
         _refuse("the Sentiment Extractor is frozen by ADR-0015; fine_tuned must be false")
     if extractor["device"] != "cpu":
         _refuse("inference runs on CPU, because a dataset's numbers must be CPU-reproducible")
+
+    evaluation = values["evaluation"]
+    pinned_bootstrap = {
+        "bootstrap_kind": "moving_block",
+        "bootstrap_block_days": BLOCK_DAYS,
+        "bootstrap_block_rule": BLOCK_RULE,
+        "bootstrap_resamples": RESAMPLES,
+        "bootstrap_seed": SEED,
+        "bootstrap_confidence": CONFIDENCE,
+    }
+    for key, expected in pinned_bootstrap.items():
+        if evaluation[key] != expected:
+            _refuse(f"evaluation.{key} is {evaluation[key]!r}, but the code states {expected!r}")
+    if tuple(evaluation["bootstrap_sensitivity_block_days"]) != SENSITIVITY_BLOCK_DAYS:
+        _refuse(
+            f"evaluation.bootstrap_sensitivity_block_days "
+            f"{list(evaluation['bootstrap_sensitivity_block_days'])} != "
+            f"{list(SENSITIVITY_BLOCK_DAYS)}"
+        )
+    if BLOCK_DAYS in tuple(evaluation["bootstrap_sensitivity_block_days"]):
+        _refuse(
+            "the reported block length is also listed as a sensitivity row; the sensitivity exists "
+            "to vary it, so repeating it would report the same interval twice"
+        )
+    stability = tuple(evaluation["bootstrap_stability_seeds"])
+    if stability != STABILITY_SEEDS:
+        _refuse(
+            f"evaluation.bootstrap_stability_seeds {list(stability)} != {list(STABILITY_SEEDS)}"
+        )
+    if SEED in stability:
+        _refuse(
+            "the pre-registered seed is also a stability seed; the stability check exists to vary "
+            "the seed, so it must not include the one being checked"
+        )
+    if len(set(stability)) != len(stability):
+        _refuse(f"evaluation.bootstrap_stability_seeds repeats a seed: {list(stability)}")
 
     annotation = values["annotation"]
     pinned_annotation = {
