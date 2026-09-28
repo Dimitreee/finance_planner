@@ -21,6 +21,17 @@ from typing import Any
 
 import yaml
 
+from cryptoguard_core.annotation import (
+    AGREEMENT_REFERENCE,
+    ALLOCATION,
+    LABELS,
+    SAMPLE_SEED,
+    SAMPLE_SIZE,
+    STRATA,
+    VOLUME_BANDS,
+    WORDING_WHEN_NOT,
+    WORDING_WHEN_TRANSFERS,
+)
 from cryptoguard_core.dataset import (
     ARM_A_FEATURES,
     ARMS_NEEDING_NEWS,
@@ -216,6 +227,44 @@ def _check(values: Mapping[str, Any]) -> None:
         _refuse("the Sentiment Extractor is frozen by ADR-0015; fine_tuned must be false")
     if extractor["device"] != "cpu":
         _refuse("inference runs on CPU, because a dataset's numbers must be CPU-reproducible")
+
+    annotation = values["annotation"]
+    pinned_annotation = {
+        "sample_size": SAMPLE_SIZE,
+        "seed": SAMPLE_SEED,
+        "agreement_reference": AGREEMENT_REFERENCE,
+        "wording_when_agreement_beats_reference": WORDING_WHEN_TRANSFERS,
+        "wording_otherwise": WORDING_WHEN_NOT,
+    }
+    for key, expected in pinned_annotation.items():
+        if annotation[key] != expected:
+            _refuse(f"annotation.{key} is {annotation[key]!r}, but the code states {expected!r}")
+    if tuple(annotation["labels"]) != LABELS:
+        _refuse(f"annotation.labels {list(annotation['labels'])} != {list(LABELS)}")
+    if tuple(annotation["volume_bands"]) != VOLUME_BANDS:
+        _refuse(
+            f"annotation.volume_bands {list(annotation['volume_bands'])} != {list(VOLUME_BANDS)}"
+        )
+    # Checked rather than merely recorded: a key nothing validates can be edited to describe a
+    # method the code does not implement, and the digest would move as if the change were real.
+    if tuple(annotation["strata"]) != STRATA:
+        _refuse(f"annotation.strata {list(annotation['strata'])} != {list(STRATA)}")
+    if annotation["allocation"] != ALLOCATION:
+        _refuse(
+            f"annotation.allocation is {annotation['allocation']!r}, but the sampler implements "
+            f"{ALLOCATION!r}"
+        )
+    lower, upper = annotation["sample_size_bounds"]
+    if not lower <= annotation["sample_size"] <= upper:
+        _refuse(
+            f"annotation.sample_size {annotation['sample_size']} is outside the pre-registered "
+            f"range [{lower}, {upper}]"
+        )
+    if annotation["unclear_excluded_from_agreement"] is not True:
+        _refuse(
+            "annotation.unclear_excluded_from_agreement must be true: mapping 'unclear' to neutral "
+            "would report an uncertainty as a reading"
+        )
 
     policy = values["policy"]
     if not policy["to_usdt_at"] < policy["to_btc_at"]:

@@ -14,6 +14,15 @@ from typing import Any
 
 import pytest
 from conftest import SNAPSHOT
+from cryptoguard_core.annotation import (
+    AGREEMENT_REFERENCE,
+    ALLOCATION,
+    LABELS,
+    SAMPLE_SEED,
+    SAMPLE_SIZE,
+    WORDING_WHEN_NOT,
+    WORDING_WHEN_TRANSFERS,
+)
 from cryptoguard_core.contract import (
     CONTRACT_PATH,
     DatasetManifest,
@@ -429,3 +438,70 @@ def test_a_fine_tuned_extractor_is_refused_by_the_contract(tmp_path: Path) -> No
     with pytest.raises(FatalDefect) as caught:
         load_contract(broken)
     assert caught.value.kind == "contract_inconsistent"
+
+
+def test_the_contract_pins_the_annotation_sample_to_the_code(tmp_path: Path) -> None:
+    """The seed is pre-registered: re-rolling it until the sample looks convenient is an edit."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        f"  seed: {SAMPLE_SEED}", "  seed: 1", 1
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+
+
+def test_a_sample_outside_the_pre_registered_range_is_refused(tmp_path: Path) -> None:
+    """ADR-0016 fixes 150-300. Below it the figure is noise; above it the labelling is not done."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        f"  sample_size: {SAMPLE_SIZE}", "  sample_size: 40", 1
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+
+
+def test_the_two_permitted_wordings_are_pinned_verbatim(tmp_path: Path) -> None:
+    """The wording rule is the whole point of ADR-0016; a paraphrase in the file is a new rule."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        WORDING_WHEN_NOT, "what the extractor thought of the news", 1
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+
+
+def test_the_live_contract_states_the_wording_rule_before_any_label_exists() -> None:
+    """Pre-registration: the rule is in the file that is digested into every run built under it."""
+    annotation = load_contract().values["annotation"]
+    assert annotation["agreement_reference"] == AGREEMENT_REFERENCE
+    assert annotation["wording_when_agreement_beats_reference"] == WORDING_WHEN_TRANSFERS
+    assert annotation["wording_otherwise"] == WORDING_WHEN_NOT
+    assert annotation["unclear_excluded_from_agreement"] is True
+    assert list(annotation["labels"]) == list(LABELS)
+
+
+def test_an_allocation_method_the_sampler_does_not_implement_is_refused(tmp_path: Path) -> None:
+    """A contract key nothing validates can promise a method the code never had."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        f"  allocation: {ALLOCATION}", "  allocation: equal_per_stratum", 1
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+
+
+def test_a_second_annotator_is_not_refused_by_the_contract(tmp_path: Path) -> None:
+    """ADR-0016 says the sample gates nothing; a better study must not fail to load."""
+    live = CONTRACT_PATH.read_text(encoding="utf-8")
+    text = live.replace("  annotators: 1", "  annotators: 2", 1)
+    amended = tmp_path / "experiment.yaml"
+    amended.write_text(text, encoding="utf-8")
+    assert load_contract(amended).values["annotation"]["annotators"] == 2

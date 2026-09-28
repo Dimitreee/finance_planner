@@ -129,6 +129,16 @@ data-sentiment: ## Score the BTC headlines with the frozen extractor, filling it
 	@# a second run loads no model, because every reading is cached by (text_hash, revision).
 	uv run python scripts/score_news_sentiment.py
 
+.PHONY: annotation
+annotation: ## Draw the Annotation Sample and write the blind labelling file
+	@# Refuses to overwrite an existing draw: the seed is pre-registered, so redrawing is a contract
+	@# edit rather than a rerun (ADR-0016).
+	uv run python scripts/annotation_sample.py draw
+
+.PHONY: annotation-score
+annotation-score: ## Measure agreement once the labels file has been filled in by hand
+	uv run python scripts/annotation_sample.py score
+
 .PHONY: audit
 audit: ## Re-run every data audit against the local snapshots
 	uv run python scripts/audit/audit_binance_archives.py

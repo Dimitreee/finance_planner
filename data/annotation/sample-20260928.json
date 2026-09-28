@@ -1,0 +1,1783 @@
+{
+  "extractor_revision": "4556d13015211d73dccd3fdd39d39232506f3e43",
+  "items": [
+    {
+      "calendar_year": 2023,
+      "day_volume": 7,
+      "item_id": "100343",
+      "stated_day": "2023-09-24",
+      "title": "These Are This Week\u2019s Best and Worst Performers as BTC Stagnates at $26.5K (Weekend Watch)",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 7,
+      "item_id": "101212",
+      "stated_day": "2023-09-07",
+      "title": "Bitcoin Could Decline Further Before A Rebound, Here\u2019s Why",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 17,
+      "item_id": "103193",
+      "stated_day": "2023-09-29",
+      "title": "Bitcoin News: BTC Price Drops To $2,700 On Binance, CZ Explains Why",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 22,
+      "item_id": "10461",
+      "stated_day": "2022-05-06",
+      "title": "Terra Beats Tesla As Second-Largest Corporate Bitcoin Holder After $1.5B Purchase",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 26,
+      "item_id": "10548",
+      "stated_day": "2022-03-23",
+      "title": "LUNA Holds Ground Over $90, Do-Kwon Hints At Factors Behind Rally",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 4,
+      "item_id": "12182",
+      "stated_day": "2021-09-04",
+      "title": "Crypto market grows 47% in 30 days adding $0.7 trillion of inflows",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 16,
+      "item_id": "12924",
+      "stated_day": "2022-05-22",
+      "title": "Fidelity Lets Customers Fund Their 401Ks with Crypto, but Not Everyone\u2019s Happy",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 215,
+      "item_id": "146117",
+      "stated_day": "2023-12-07",
+      "title": "SunnySide, Rosseau Partner To Offer Bitcoin Mining Companies Immersion Cooling Tech",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 89,
+      "item_id": "146147",
+      "stated_day": "2024-07-09",
+      "title": "Opportunity? Technical indicators point to $64K target for Bitcoin",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 65,
+      "item_id": "146160",
+      "stated_day": "2024-07-03",
+      "title": "Cardano (ADA) On The Rise: Exploring Upward Momentum and Bullish Prospects",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 13,
+      "item_id": "146304",
+      "stated_day": "2024-05-18",
+      "title": "Bitcoin surge incoming? Tether mints another $1 billion USDT",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 25,
+      "item_id": "146440",
+      "stated_day": "2024-01-03",
+      "title": "There was a sudden drop in Bitcoin (BTC) price! What is the reason for the decline?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 32,
+      "item_id": "146457",
+      "stated_day": "2024-04-23",
+      "title": "Bitcoin miners underwater as production costs surge post-halving",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 41,
+      "item_id": "146513",
+      "stated_day": "2024-03-11",
+      "title": "Large corporations, major wirehouses gearing up to buy Bitcoin: Bitwise",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 34,
+      "item_id": "146519",
+      "stated_day": "2024-02-29",
+      "title": "Crypto rumor suggests Jeff Bezos sold $8.5 billion in Amazon stock to buy Bitcoin",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 89,
+      "item_id": "147441",
+      "stated_day": "2024-07-09",
+      "title": "Here\u2019s When The Bitcoin Price Could Top According To Past Halving Cycles",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 40,
+      "item_id": "148754",
+      "stated_day": "2024-06-06",
+      "title": "Paxos Introduces New Stablecoin That Generates Yields",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 40,
+      "item_id": "148762",
+      "stated_day": "2024-03-06",
+      "title": "Ether, Cardano, Solana, Shiba Inu Eying Gigantic Run as Crypto Market Enters Hope Phase",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 30,
+      "item_id": "150702",
+      "stated_day": "2024-06-13",
+      "title": "Why Is Bitcoin Stagnant Despite ETF Inflows? Report Answers",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 52,
+      "item_id": "150703",
+      "stated_day": "2024-06-12",
+      "title": "Is Bitcoin Overheated Right Now? This Metric Suggests No",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 40,
+      "item_id": "150717",
+      "stated_day": "2024-06-10",
+      "title": "Litecoin Price Analysis: Key Resistances Blocking the Path to $100",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 40,
+      "item_id": "150720",
+      "stated_day": "2024-06-10",
+      "title": "Crypto News Today: Market Holds Breath Ahead of U.S. Data",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 49,
+      "item_id": "151041",
+      "stated_day": "2024-01-24",
+      "title": "FTX Unloads $1 Billion GBTC Shares; Will The Bitcoin Rally Be \u201cVicious\u201d?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 54,
+      "item_id": "151181",
+      "stated_day": "2024-07-01",
+      "title": "Shiba Inu \u2018Underbought,\u2019 While Bitcoin \u2018Overbought\u2019 Recently: Santiment",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 40,
+      "item_id": "151266",
+      "stated_day": "2024-06-10",
+      "title": "Bitcoin Briefly Tastes $70K, ETH, DOGE Continue In The Red: 'Liquidity Zone Around $73,000' Might Be Tapped, Says Trader",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 40,
+      "item_id": "151538",
+      "stated_day": "2024-05-21",
+      "title": "Top Trending Crypto: BlockDAG Amassed $28.6M Presale Post Piccadilly Circus Display, Overshadows Avalanche Price Prediction & VeChain News Trend",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 27,
+      "item_id": "151997",
+      "stated_day": "2024-05-07",
+      "title": "Cardano Creator Proposes Game-Changing Bitcoin Cash Integration To Boost Functionality: Details",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 12,
+      "item_id": "152001",
+      "stated_day": "2024-05-05",
+      "title": "Cardano founder proposes Bitcoin Cash integration in X poll",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 21,
+      "item_id": "152518",
+      "stated_day": "2024-01-20",
+      "title": "Top 5 ETFs: BlackRock\u2019s IBIT Leads With $1.23B Inflow in Last 5 Days",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 28,
+      "item_id": "152891",
+      "stated_day": "2024-05-09",
+      "title": "Ripple and XRPL Labs Join Alliance to Develop Blockchain Recovery Standards",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 48,
+      "item_id": "154179",
+      "stated_day": "2024-02-27",
+      "title": "Bitcoin Price Moons To $57K As The Bulls Aim For $60K",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 31,
+      "item_id": "154212",
+      "stated_day": "2024-04-26",
+      "title": "Crypto Prices April 26: BTC steady $64K Amid Market Madness",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 22,
+      "item_id": "154226",
+      "stated_day": "2024-03-14",
+      "title": "EOS Price Analysis: Rally Takes A Short Break",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 31,
+      "item_id": "154732",
+      "stated_day": "2024-04-16",
+      "title": "Bitcoin Has Next Major Demand Zone At $56,000: Brace For Impact?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 30,
+      "item_id": "155559",
+      "stated_day": "2024-04-12",
+      "title": "Bitcoin Consolidates at All-Time Highs, Momentum Reignites: ARK Invest Report",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 45,
+      "item_id": "156478",
+      "stated_day": "2024-06-19",
+      "title": "Ethereum-Based Tokens Sky-High With the SEC\u2019s Big Move: LDO & ENS Prices Approach Crucial Resistance",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 48,
+      "item_id": "156609",
+      "stated_day": "2024-01-26",
+      "title": "BlackRock\u2019s iShares Bitcoin ETF (IBIT) surpasses $2 billion AUM in just ten days",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 54,
+      "item_id": "156829",
+      "stated_day": "2024-07-01",
+      "title": "NFT Sector Records Worst Performance in June: Sales Plummet Across the Board",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 26,
+      "item_id": "157197",
+      "stated_day": "2024-04-09",
+      "title": "Ethena: Should you bet on ENS after its 97% surge?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 42,
+      "item_id": "157860",
+      "stated_day": "2024-06-07",
+      "title": "Altcoins: Analyst Predicts These Cryptos To Rally In June",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 30,
+      "item_id": "157948",
+      "stated_day": "2024-01-25",
+      "title": "SOL Price Recovery Could Soon Fade If Solana Fails To Clear This Hurdle",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 31,
+      "item_id": "159906",
+      "stated_day": "2024-04-26",
+      "title": "Bitcoin Bearish Signal: Analyst Warns Of Potential Drop To $59,000",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 48,
+      "item_id": "160054",
+      "stated_day": "2024-05-29",
+      "title": "El Salvador\u2019s Bitcoin and AI Adoption Plans Could 10x GDP by 2029",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 60,
+      "item_id": "160225",
+      "stated_day": "2024-06-28",
+      "title": "39% Chance of Dropping Out \u2014 Joe Biden\u2019s Debate Stumbles Fuel Prediction Market Betting",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 24,
+      "item_id": "160695",
+      "stated_day": "2024-03-21",
+      "title": "Bitcoin Tops $67,000 Following Fed's Decision; Ondo Emerges As Top Gainer",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 66,
+      "item_id": "162147",
+      "stated_day": "2024-06-24",
+      "title": "Should You Buy Solana Dip Or PEPE, Dogwifhat Meme Coins?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 13,
+      "item_id": "163411",
+      "stated_day": "2024-01-27",
+      "title": "Beam CEO on US-Listed Spot Bitcoin ETFs\u2019 Impact and New Stablecoin-Powered Shopping App",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 29,
+      "item_id": "163573",
+      "stated_day": "2024-04-19",
+      "title": "Blofin Whales\u2019 View: War, Gold and Crypto",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 36,
+      "item_id": "164154",
+      "stated_day": "2024-07-19",
+      "title": "Winklevoss Twins Donate $1M in Bitcoin",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 237,
+      "item_id": "164350",
+      "stated_day": "2024-09-23",
+      "title": "Bitcoin poised for potential rally as FTX payout looms and Fed shifts",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 60,
+      "item_id": "164586",
+      "stated_day": "2024-09-21",
+      "title": "BingX Hack News: Withdrawals Resumed After $52M Loss",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 34,
+      "item_id": "165051",
+      "stated_day": "2024-09-14",
+      "title": "Binance Issues Global Alert Over Clipper Malware That Alters Crypto Wallet Addresses",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 90,
+      "item_id": "165689",
+      "stated_day": "2024-09-19",
+      "title": "Cryptocurrency News Today (Sept 19th, 2024): Bitcoin Price Breaks Past $63k! Is $66k Next?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 76,
+      "item_id": "166231",
+      "stated_day": "2024-09-02",
+      "title": "Crypto Price Analysis 9-2 BTC, ETH, SOL, DOT, TON, ATOM, WIF",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 20,
+      "item_id": "166455",
+      "stated_day": "2024-08-17",
+      "title": "Smart Money Address Makes $14 Million In Profit By Selling WBTC!",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 59,
+      "item_id": "166492",
+      "stated_day": "2024-08-14",
+      "title": "Coinbase teases \u2018cbBTC\u2019 days after BitGo Wrapped Bitcoin controversy",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 35,
+      "item_id": "166495",
+      "stated_day": "2024-08-12",
+      "title": "WBTC Custody Changes Prompts Defi Moves, Bitgo CEO Disregard Concerns",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 17,
+      "item_id": "16677",
+      "stated_day": "2022-03-09",
+      "title": "Secret Class of Crypto Assets Explode As Bitcoin Blasts Above $42,000",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 38,
+      "item_id": "168166",
+      "stated_day": "2024-08-01",
+      "title": "Defunct Mt. Gox drops Bitcoin repayment update, will BTC react to it?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 36,
+      "item_id": "168170",
+      "stated_day": "2024-07-31",
+      "title": "Toncoin Price Targets New Highs After TON-Trust Wallet Integration",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 40,
+      "item_id": "169310",
+      "stated_day": "2024-08-13",
+      "title": "Asset Manager Grayscale Introduces Crypto Fund for MakerDAO's MKR",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 62,
+      "item_id": "169636",
+      "stated_day": "2024-09-13",
+      "title": "Crypto Prices Today September 13: BTC Below $58K, BEAM Up 12%, & QNT Soars 10%",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 54,
+      "item_id": "169721",
+      "stated_day": "2024-09-01",
+      "title": "Bitcoin Network Stacks Devs 'Can See the Finish Line' With Nakamoto Upgrade",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 54,
+      "item_id": "169808",
+      "stated_day": "2024-08-23",
+      "title": "Tron Community Shaken By 12,000 BTC Withdrawal From USDD Reserves",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 59,
+      "item_id": "171271",
+      "stated_day": "2024-08-14",
+      "title": "Dydx Introduces Major Chain Upgrade With New Features",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 16,
+      "item_id": "171280",
+      "stated_day": "2024-07-28",
+      "title": "Crypto Weekly Roundup: Ethereum ETFs Greenlight, dYdX Compromised, & More",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 18,
+      "item_id": "172626",
+      "stated_day": "2024-07-14",
+      "title": "The Trump assassination attempt sent Bitcoin surging",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 45,
+      "item_id": "173825",
+      "stated_day": "2024-08-06",
+      "title": "BONK Price at Risk of Losing 180-Day Support as Traders Seek More Discount",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 46,
+      "item_id": "174638",
+      "stated_day": "2024-12-31",
+      "title": "Bitcoin Bearish Flag Pattern Says Crash Is Far From Over Despite Crash To $91,000",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 36,
+      "item_id": "174802",
+      "stated_day": "2024-11-21",
+      "title": "Nayib Bukele tweet pumps Chill Guy memecoin amid creator\u2019s legal threats",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 217,
+      "item_id": "174989",
+      "stated_day": "2025-01-07",
+      "title": "Czech central bank mulls Bitcoin to diversify foreign exchange reserves",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 217,
+      "item_id": "175001",
+      "stated_day": "2025-01-07",
+      "title": "Rare Solana Price Pattern Hints 100% Rally As SOL Beats Ethereum & Base",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 217,
+      "item_id": "175088",
+      "stated_day": "2025-01-07",
+      "title": "Riot Platforms Mines 516 Bitcoin in December, Holdings Up 141% in 2024",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 25,
+      "item_id": "177056",
+      "stated_day": "2024-12-14",
+      "title": "BiT Global Digital Sues Coinbase For Delisting wBTC Causing $1 Billion In Damages",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 47,
+      "item_id": "177096",
+      "stated_day": "2024-11-20",
+      "title": "Bitcoin Faces \u2018Bank Run\u2019 Vulnerability, Warns Cyber Capital Founder Justin Bons",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 53,
+      "item_id": "177144",
+      "stated_day": "2024-10-17",
+      "title": "Wrapped Bitcoin Wars Ramp Up as Kraken Reveals kBTC",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 13,
+      "item_id": "177184",
+      "stated_day": "2024-09-28",
+      "title": "Why Wrapped Bitcoin on AAVE surged past $2B, explained",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 44,
+      "item_id": "178320",
+      "stated_day": "2024-12-13",
+      "title": "Early ETFSwap (ETFS) Investors Enjoy 50x Gains Following Uniswap Listing, Analyst Predict Another 20,000% Run",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 36,
+      "item_id": "178860",
+      "stated_day": "2024-11-21",
+      "title": "Bitcoin Cash surges 15% in 24 hours, hits 7-month high: Is $620 next?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 53,
+      "item_id": "178888",
+      "stated_day": "2024-10-17",
+      "title": "XRP, Litecoin and Bitcoin Cash Lead the Rally \u2013 Could a Major Market Announcement Be Coming This Week?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 50,
+      "item_id": "178975",
+      "stated_day": "2024-11-29",
+      "title": "ALGO Price Analysis: Can the Rally Target $1?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 33,
+      "item_id": "179324",
+      "stated_day": "2024-12-02",
+      "title": "Crypto Prices Today, December 2: BTC at $97K, XRP Jumps 28%, HBAR Surges 44%",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 30,
+      "item_id": "179391",
+      "stated_day": "2024-10-21",
+      "title": "Best Crypto to Buy Now October 21 \u2013 APE, JUP, MEW",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 33,
+      "item_id": "179890",
+      "stated_day": "2025-01-01",
+      "title": "How ETH, SOL, SUI and AAVE could respond to new Bitcoin price ATHs in 2025",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 33,
+      "item_id": "180120",
+      "stated_day": "2024-09-24",
+      "title": "China Remains The World\u2019s Largest Bitcoin Mining Hub Despite Crypto Ban",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 39,
+      "item_id": "180290",
+      "stated_day": "2024-10-09",
+      "title": "Bitcoin Supply In Loss Nears 20%: Could This Trigger A Fresh Surge?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 39,
+      "item_id": "180856",
+      "stated_day": "2024-10-30",
+      "title": "Shiba Inu Coin Lead Reveals Why SHIB Outshines BTC, Price To Rally 300%?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 38,
+      "item_id": "181489",
+      "stated_day": "2024-11-13",
+      "title": "Bitcoin miners Hut 8, Bitfarms and HIVE Digital report Q3 earnings",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 31,
+      "item_id": "181792",
+      "stated_day": "2024-12-23",
+      "title": "SilentBerry Secures Strategic Investment from CKB Eco Fund to Pioneer Blockchain Publishing",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 53,
+      "item_id": "183038",
+      "stated_day": "2024-10-17",
+      "title": "FBI arrests Alabama man behind SEC social media hack and phony spot bitcoin ETF post",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 9,
+      "item_id": "183226",
+      "stated_day": "2024-11-02",
+      "title": "Crypto Prices Today November 2: BTC At $69K, Altcoins Flux, RAY Soars 15%",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 63,
+      "item_id": "183683",
+      "stated_day": "2025-04-03",
+      "title": "Trader Says Ethereum Headed for a Massive Crash Against Bitcoin As Bearish Pattern Forms \u2013 Here\u2019s His Outlook",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 83,
+      "item_id": "184397",
+      "stated_day": "2025-04-04",
+      "title": "This Week in Crypto: Buterin\u2019s L2 Roadmap, Hyperliquid Security, $1 Billion XRP Unlocks, and More",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 83,
+      "item_id": "184408",
+      "stated_day": "2025-04-04",
+      "title": "Pendle (PENDLE) Outshines Major Coins with a 10% Rally as It Eyes More Gains",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 19,
+      "item_id": "185976",
+      "stated_day": "2025-02-02",
+      "title": "Chainlink (LINK) Set For $36? Whale Moves Suggest A Big Rally\u2014Analyst",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 76,
+      "item_id": "186893",
+      "stated_day": "2025-04-02",
+      "title": "Fidelity Launches No-Fee Retirement Plan for Bitcoin, Ethereum, Litecoin Investments",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 19,
+      "item_id": "186977",
+      "stated_day": "2025-03-02",
+      "title": "Qubetics Crypto ICO Presale Surges Past $14.4M \u2013 This CertiK-Audited Project Thrives While Bitcoin & Litecoin Push the Market to New Heights in 2025",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 31,
+      "item_id": "188403",
+      "stated_day": "2025-02-04",
+      "title": "Can Ethereum Regain Its Dominance in 2025 Amid Leadership Shakeups and Rising Competition?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 75,
+      "item_id": "189169",
+      "stated_day": "2025-05-05",
+      "title": "Bitwise President Urges Bitcoin Investment After Warren Buffett Sounds U.S. Dollar Alarm",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 121,
+      "item_id": "189293",
+      "stated_day": "2025-05-04",
+      "title": "Bitcoin Solving Global Problem That Triggers Chaos and Fiat Currency Expansion, Says Preston Pysh",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 75,
+      "item_id": "189634",
+      "stated_day": "2025-05-03",
+      "title": "5 Signals That Show Most Bullish Bitcoin Setup Since 2020",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 75,
+      "item_id": "190539",
+      "stated_day": "2025-05-03",
+      "title": "Crypto Price Analysis: Bitcoin (BTC), Solana (SOL), Hedara (HBAR), VeChain (VET), Remittix (RTX) and Shiba Inu (SHIB)",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 78,
+      "item_id": "190808",
+      "stated_day": "2025-04-28",
+      "title": "Bitcoin Ethereum XRP Dogecoin Hold Firm After Last Week's Rally: What's Next",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 18,
+      "item_id": "190861",
+      "stated_day": "2025-04-27",
+      "title": "New Address Acquires WBTC and Engages in USDT Lending on Morpho Platform",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 6,
+      "item_id": "192236",
+      "stated_day": "2025-03-08",
+      "title": "Using Crypto to Unlock the Entrepreneurial Spirit of Women Globally",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 54,
+      "item_id": "193337",
+      "stated_day": "2025-04-29",
+      "title": "Kraken powers new crypto trading venture for Europe\u2019s second-largest neobank bunq",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 19,
+      "item_id": "193500",
+      "stated_day": "2025-03-02",
+      "title": "Bitcoin Mining Platforms Approach Profitability Amid Price Increase",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 25,
+      "item_id": "193513",
+      "stated_day": "2025-02-17",
+      "title": "Bitcoin\u2019s Big Breakout? Fed\u2019s \u201cNot QE, QE\u201d Just Flipped The Switch",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 25,
+      "item_id": "194073",
+      "stated_day": "2025-04-18",
+      "title": "ARK invest rotates crypto holdings: Boosts solana ETF, trims Bitcoin exposure",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 28,
+      "item_id": "194075",
+      "stated_day": "2025-04-17",
+      "title": "Bitcoin Gains Stability as ARK Invest Doubles Down on Accumulation",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 29,
+      "item_id": "194169",
+      "stated_day": "2025-01-13",
+      "title": "ARKA NOEGO / NOAH\u2019S ARK: On Solidarity and Bitcoin",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 25,
+      "item_id": "194674",
+      "stated_day": "2025-04-26",
+      "title": "Best crypto to buy before April ends: Bitcoin, Solana, Bitcoin Pepe",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 34,
+      "item_id": "194819",
+      "stated_day": "2025-03-03",
+      "title": "Top 3 Crypto Airdrops to Watch for the First Week of March",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 17,
+      "item_id": "195492",
+      "stated_day": "2025-02-08",
+      "title": "DCG's Barry Silbert Bets Big On Decentralized AI",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 33,
+      "item_id": "195629",
+      "stated_day": "2024-10-15",
+      "title": "Toncoin (TON) Stumbles But Notcoin (NOT) Surges, What\u2019s Next?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 33,
+      "item_id": "195630",
+      "stated_day": "2024-10-15",
+      "title": "Why Bitcoin Price Blasted Past $66,500: Key Reasons Revealed",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 41,
+      "item_id": "197215",
+      "stated_day": "2025-02-26",
+      "title": "Ethena Labs closes proof of reserves oracle deal after Bybit hack caused weekend depeg scare",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 68,
+      "item_id": "198606",
+      "stated_day": "2025-04-23",
+      "title": "Here\u2019s Why Bitcoin, Altcoins Are Rallying: Does Bull Run Start?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 19,
+      "item_id": "200208",
+      "stated_day": "2025-01-08",
+      "title": "Crypto Industry to Host Inaugural Ball for Trump and Vance",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 45,
+      "item_id": "201123",
+      "stated_day": "2025-03-05",
+      "title": "AXL\u2019s price jumps 14% as Canary Capital files for Axelar ETF",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 94,
+      "item_id": "202172",
+      "stated_day": "2024-08-30",
+      "title": "#BLUR | Volume spike (USDT PAIR)\n387 times the average volume\n757.16K USDT traded in 1 min\n\u2514Buying vol: 454.63K USDT \ud83d\udfe2\nBoost score: 6/10\n24h Vol: 2.81M USDT (#Binance)\nPrice: 0.1552 (-8.6% in 24h) $BLUR #BTC",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 39,
+      "item_id": "202388",
+      "stated_day": "2024-07-22",
+      "title": "Weekly Crypto Market Roundup: Top Gainers and Losers Revealed",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 37,
+      "item_id": "211317",
+      "stated_day": "2024-11-19",
+      "title": "Softwar Author Pushes Bitcoin as National Security Asset in White House Bid",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 6,
+      "item_id": "211965",
+      "stated_day": "2024-03-31",
+      "title": "SOL, XRP, DOGE, 1000SATS Price Analysis for the New Week",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 18,
+      "item_id": "215628",
+      "stated_day": "2024-10-11",
+      "title": "Neiro Surges 58%, Rewarding Those Who Bought Meme Coin Three Days Before Rally",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 47,
+      "item_id": "223843",
+      "stated_day": "2025-05-09",
+      "title": "Is the Crypto Market Entering an Altcoin Season in May 2025?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 25,
+      "item_id": "224113",
+      "stated_day": "2025-05-06",
+      "title": "Crypto Exchange Kucoin Slams \u2018Misleading\u2019 Report on BTC Holdings",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 58,
+      "item_id": "225877",
+      "stated_day": "2025-05-22",
+      "title": "Worldcoin Surges as Sam Altman Teams With Apple Icon Jony Ive \u2014 Is This the Start of the AI Coin Supercycle?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 34,
+      "item_id": "227461",
+      "stated_day": "2024-11-14",
+      "title": "JUST IN: \ud83c\uddfa\ud83c\uddf8 Goldman Sachs just disclosed owning $710 MILLION #Bitcoin through ETFs - SEC fillings h/t: @MacroScope17",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 10,
+      "item_id": "227537",
+      "stated_day": "2022-10-16",
+      "title": "Islamic Coin Claims it Will Scale Like Bitcoin and Hit $1 Trillion in Value",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 10,
+      "item_id": "227862",
+      "stated_day": "2022-06-23",
+      "title": "#1017 Max Keiser On Helping A Nation Build On The Bitcoin Standard",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 5,
+      "item_id": "228050",
+      "stated_day": "2023-01-25",
+      "title": "Arizona senator pushes bill to recognize Bitcoin as legal tender in the state",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 13,
+      "item_id": "228266",
+      "stated_day": "2022-08-09",
+      "title": "Bitcoin network\u2019s power demand drops by over 20% in 2022 as shift to renewables accelerates",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 28,
+      "item_id": "22915",
+      "stated_day": "2022-04-11",
+      "title": "On-chain Data Suggests Bitcoin Miners Were Behind The Selloff",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 99,
+      "item_id": "230801",
+      "stated_day": "2025-11-27",
+      "title": "Ethereum\u2019s End-Of-Year Rally Still At Play? Analysts Eye 50% December Jump",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 99,
+      "item_id": "230817",
+      "stated_day": "2025-11-27",
+      "title": "Ethereum Price Rockets Above $3K Again \u2014 Are Bulls Preparing the Next Leg Higher?",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 109,
+      "item_id": "230916",
+      "stated_day": "2025-11-26",
+      "title": "Arthur Hayes Issues Bitcoin Price Alert, Details BTC, Ethereum and Altcoin Forecast for 2026",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 99,
+      "item_id": "231377",
+      "stated_day": "2025-11-27",
+      "title": "Metaplanet In Jeopardy: Bitcoin Needs To Surpass $108,000 By December 18 To Prevent New Crisis",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 109,
+      "item_id": "231416",
+      "stated_day": "2025-11-26",
+      "title": "Bitcoin(BTC) Surpasses 89,000 USDT with a 1.36% Increase in 24 Hours",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 109,
+      "item_id": "231445",
+      "stated_day": "2025-11-26",
+      "title": "Bitcoin(BTC) Surpasses 88,000 USDT with a Narrowed 0.03% Decrease in 24 Hours",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 17,
+      "item_id": "231773",
+      "stated_day": "2025-11-09",
+      "title": "Charles Hoskinson: Bitcoin\u2019s DeFi Could be the Largest Contributor to Cardano\u2019s TVL\u202c",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 48,
+      "item_id": "232257",
+      "stated_day": "2025-11-21",
+      "title": "Saylor\u2019s Strategy Under Threat: Index Status At Risk With $8 Billion On The Line",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 51,
+      "item_id": "232354",
+      "stated_day": "2025-11-14",
+      "title": "Price predictions 11/14: BTC, ETH, XRP, BNB, SOL, DOGE, ADA, HYPE, LINK, BCH",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 25,
+      "item_id": "232552",
+      "stated_day": "2025-10-29",
+      "title": "Cardano Founder Slams Peter Schiff Over Multiple Failed Bitcoin Price Forecasts",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 18,
+      "item_id": "234326",
+      "stated_day": "2025-11-08",
+      "title": "Filecoin (FIL) Skyrockets by 50% in a Day, Bitcoin (BTC) Back to $102K: Weekend Watch",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 51,
+      "item_id": "234677",
+      "stated_day": "2025-11-14",
+      "title": "WBTC comes to Hedera as Bitcoin DeFi momentum accelerates",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 8,
+      "item_id": "238692",
+      "stated_day": "2025-06-12",
+      "title": "Litecoin Forecast Eyes $150, But Investors Flock to Ozak AI for Bigger 2025 Returns",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 14,
+      "item_id": "239600",
+      "stated_day": "2025-08-25",
+      "title": "What Did Crypto Whales Do as Ethereum (ETH) Hit a Record High?",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 9,
+      "item_id": "240977",
+      "stated_day": "2025-08-15",
+      "title": "Crypto Price Analysis August-15: ETH, XRP, ADA, SOL, and HYPE",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 5,
+      "item_id": "242073",
+      "stated_day": "2023-02-08",
+      "title": "Bearish Signal? DCG Starts Selling Grayscale Crypto Shares At Almost 50% Discount",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 11,
+      "item_id": "242306",
+      "stated_day": "2023-09-05",
+      "title": "Despite the Bitcoin Dip, Toncoin, Fetch.ai, and Borroe.Finance Thrive",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 11,
+      "item_id": "242359",
+      "stated_day": "2023-07-27",
+      "title": "Ripple, Solana, And Stellar-based Products Record Massive Institutional Investments As Market Rebounds",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 12,
+      "item_id": "246076",
+      "stated_day": "2025-07-22",
+      "title": "Maestro\u2019s indexer for Ordinals & Runes enables new Bitcoin DeFi applications on ICP",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 11,
+      "item_id": "248384",
+      "stated_day": "2025-11-02",
+      "title": "Crypto Market Adds $33 Billion As BTC Price Retests $111,000",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 9,
+      "item_id": "250353",
+      "stated_day": "2022-11-23",
+      "title": "Bitfinex is closing margin trading & funding for Bitcoin SV (BSV): Reduce-only mode from 28th Nov. Closing marg\u2026",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 2,
+      "item_id": "254319",
+      "stated_day": "2023-03-16",
+      "title": "Bitcoin Leverage Ratio Plunges, Here\u2019s What This Means",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 7,
+      "item_id": "254427",
+      "stated_day": "2022-12-15",
+      "title": "Why This Bitcoin Bearish Divergence Could Spell Doom For BTC Rally",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 6,
+      "item_id": "254889",
+      "stated_day": "2025-05-30",
+      "title": "How Stacks is looking to power a second wave of Bitcoin DeFi",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2024,
+      "day_volume": 40,
+      "item_id": "254982",
+      "stated_day": "2024-02-16",
+      "title": "Bitcoin All-Time High Ahead: Historical Pattern Signals 50% Chance Of Reaching $100K By August",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2025,
+      "day_volume": 9,
+      "item_id": "256697",
+      "stated_day": "2025-08-17",
+      "title": "LINK Skyrockets by Double Digits While BTC\u2019s Consolidation Continues: Weekend Watch",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 11,
+      "item_id": "258940",
+      "stated_day": "2021-10-12",
+      "title": "Venezuela\u2019s International Airport to Reportedly Accept Bitcoin Payments for Flight Tickets",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 8,
+      "item_id": "6280",
+      "stated_day": "2021-05-26",
+      "title": "Can Elon Musk shrink Bitcoin mining\u2019s carbon footprint? PancakeBunny\u2019s $200 million hack. Ray Dalio admits to owning crypto.",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 5,
+      "item_id": "6636",
+      "stated_day": "2021-06-18",
+      "title": "This Little-Known Altcoin Surged Over 200% While Bitcoin Moved Sideways",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 23,
+      "item_id": "75230",
+      "stated_day": "2022-06-03",
+      "title": "New York Senate passes Bitcoin mining ban bill over environmental concerns",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 28,
+      "item_id": "75869",
+      "stated_day": "2022-05-13",
+      "title": "UAE-Based Airline \u2018Emirates\u2019 Says It Is Planning to Accept Bitcoin for Payments",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 26,
+      "item_id": "77664",
+      "stated_day": "2022-03-14",
+      "title": "Bitcoin mixing service CoinJoin starts blacklisting BTC tied to illegal activity",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 15,
+      "item_id": "77929",
+      "stated_day": "2022-01-07",
+      "title": "Bitcoin leverage ratio reaches new highs",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 13,
+      "item_id": "78025",
+      "stated_day": "2021-12-10",
+      "title": "\u2018Crash and depression coming\u2019 as fake inflation accelerates, says Robert Kiyosaki",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 8,
+      "item_id": "78164",
+      "stated_day": "2021-10-08",
+      "title": "Ethereum risks drop below $3.2K as ETH price faces heavy resistance",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 18,
+      "item_id": "78357",
+      "stated_day": "2021-08-25",
+      "title": "Afghan Computer Engineer, Who Wanted to Mine Bitcoin and Ethereum, Flees Taliban, Gets Arrested in Turkey",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 29,
+      "item_id": "78403",
+      "stated_day": "2022-06-01",
+      "title": "250,000 Bitcoins Bought by Long-Term Holders Since LUNA Crash on May 7: Details",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 13,
+      "item_id": "78750",
+      "stated_day": "2022-04-09",
+      "title": "Connecting Tesla Cars To Charging Stations Via Lightning At Bitcoin 2022",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 40,
+      "item_id": "78765",
+      "stated_day": "2022-04-08",
+      "title": "Strike deals with Shopify to let US merchants accept Bitcoin via Lightning",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 18,
+      "item_id": "78886",
+      "stated_day": "2022-03-31",
+      "title": "TA: Why Bitcoin Could Start Fresh Increase and Revisit $50K",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 33,
+      "item_id": "78931",
+      "stated_day": "2022-03-28",
+      "title": "Bitcoin Could Reach $53K on Triangle Break, Impending Bull Cross, Analysts Say",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 41,
+      "item_id": "78985",
+      "stated_day": "2022-03-24",
+      "title": "Exxon Is Mining Bitcoin With Excess Gas: Report",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 15,
+      "item_id": "79130",
+      "stated_day": "2022-03-30",
+      "title": "The Bitcoin Community Reacts To Greenpeace And Ripple\u2019s Latest Attack",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 13,
+      "item_id": "81689",
+      "stated_day": "2022-02-07",
+      "title": "Canada\u2019s accounting giant KPMG adds Bitcoin to its corporate treasury",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 6,
+      "item_id": "82146",
+      "stated_day": "2021-05-27",
+      "title": "Crypto Analyst Explains $ADA and $MATIC Could Explode Over Next Few Weeks",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 12,
+      "item_id": "82325",
+      "stated_day": "2021-11-09",
+      "title": "Litecoin Surges to $265 As Bitcoin Reaches New Highs",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 18,
+      "item_id": "82358",
+      "stated_day": "2021-08-23",
+      "title": "Bitcoin, Ethereum, Litecoin are now available to Paypal\u2019s U.K customers",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 4,
+      "item_id": "82863",
+      "stated_day": "2021-10-10",
+      "title": "With these aspects falling in place, MATIC could well be on its way to a breakout",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 7,
+      "item_id": "83160",
+      "stated_day": "2021-12-23",
+      "title": "A Crypto Christmas Miracle? Bitcoin Signal Suggests A Bottom Is Near",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 7,
+      "item_id": "83309",
+      "stated_day": "2021-04-02",
+      "title": "Bitcoin Halving Epoch Scale Primed to Send Price 20x Higher in Long Term",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 3,
+      "item_id": "84767",
+      "stated_day": "2021-02-22",
+      "title": "More Woes For XRP As MoneyGram Suspends Trading On Ripple\u2019s Platform",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 9,
+      "item_id": "85187",
+      "stated_day": "2021-11-14",
+      "title": "Trader Who Called Latest Bitcoin Correction Says XRP Is One Resistance Away From Rallying to New All-Time High",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2021,
+      "day_volume": 9,
+      "item_id": "85753",
+      "stated_day": "2021-04-08",
+      "title": "XRP Flashing Powerful Buy Signal, Says Legendary Trader Peter Brandt",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 215,
+      "item_id": "85982",
+      "stated_day": "2023-12-07",
+      "title": "\u2018Rich Dad\u2019 Kiyosaki warns next crash \u2018may turn into a Depression\u2019",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 215,
+      "item_id": "86005",
+      "stated_day": "2023-12-07",
+      "title": "Crypto-Friendly US Presidential Candidate Fires Shots at Gary Gensler",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 215,
+      "item_id": "86037",
+      "stated_day": "2023-12-07",
+      "title": "Here's Why Bitcoin's Famed Bull-Market Pullbacks Have Been Elusive During the Recent Price Surge",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 44,
+      "item_id": "86154",
+      "stated_day": "2023-11-30",
+      "title": "MicroStrategy Buys $593 Million Worth of Bitcoin",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 30,
+      "item_id": "86183",
+      "stated_day": "2023-11-23",
+      "title": "Bitcoin investors Show Confidence As 70.35% of Bitcoin Supply Stays Unmoved",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 25,
+      "item_id": "86239",
+      "stated_day": "2023-11-07",
+      "title": "Massive victory for Bitcoin bulls if this critical level holds",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 4,
+      "item_id": "86484",
+      "stated_day": "2022-11-29",
+      "title": "Bitcoin\u2019s technical indicators point to a \u2018big move\u2019 on the horizon",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 27,
+      "item_id": "86536",
+      "stated_day": "2023-11-13",
+      "title": "XRP, Ether, Solana, Cardano, Shiba Inu Brace For $1 Trillion \u2018Bull Shock\u2019 As Spot Bitcoin ETF Comes Nigh",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 16,
+      "item_id": "86539",
+      "stated_day": "2023-11-12",
+      "title": "Solana Eclipses $60: A Detailed Look at the Factors Driving SOL Price Rally",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 215,
+      "item_id": "86773",
+      "stated_day": "2023-12-07",
+      "title": "Bitcoin prepares for the next push up",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 6,
+      "item_id": "87652",
+      "stated_day": "2022-08-01",
+      "title": "Craig Wright Wins One Pound, Bitcoin & Ethereum Flows, Ledger's Deal, Soulbound Binance + More News",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 4,
+      "item_id": "90643",
+      "stated_day": "2022-10-30",
+      "title": "Dogecoin shoots by 115% in a week as bulls push DOGE to reclaim 5-month high",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 6,
+      "item_id": "92672",
+      "stated_day": "2022-11-09",
+      "title": "Polygon (MATIC) Looks Good Above $0.75 Despite Market Turmoil; Here Is Why?",
+      "volume_band": "quiet"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 53,
+      "item_id": "93134",
+      "stated_day": "2023-12-01",
+      "title": "Bitcoin (BTC) Halving Sparks Analyst Predictions, Litecoin  (LTC) Shatters Records, Meme Moguls Uncover Price Discoveries",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 12,
+      "item_id": "94605",
+      "stated_day": "2023-09-06",
+      "title": "Turning Point For Bitcoin And Crypto? DXY At 5-Month High",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 8,
+      "item_id": "95576",
+      "stated_day": "2023-09-04",
+      "title": "Cosmos primed for more downside on the price chart- here\u2019s why",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2022,
+      "day_volume": 28,
+      "item_id": "9615",
+      "stated_day": "2022-06-09",
+      "title": "LBank Exchange Will List Lego Coin (LEGO) on June 10, 2022",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 15,
+      "item_id": "96429",
+      "stated_day": "2023-08-16",
+      "title": "Bitcoin Dominance on the Rise as These Alts Tumbled Daily (Market Watch)",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 51,
+      "item_id": "97258",
+      "stated_day": "2023-11-29",
+      "title": "Bitcoin Ordinals Marketplace Bioniq Launches\u2014On Internet Computer",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 13,
+      "item_id": "99331",
+      "stated_day": "2023-09-30",
+      "title": "Ager-Hanssen Exits nChain, Ignites \u2018Faketoshi\u2019 Claims Against Wright",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 9,
+      "item_id": "99374",
+      "stated_day": "2023-06-24",
+      "title": "Bitcoin hard forks, Bitcoin Cash and Bitcoin SV in the spotlight with double-digit gains",
+      "volume_band": "typical"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 40,
+      "item_id": "99668",
+      "stated_day": "2023-11-17",
+      "title": "Bitcoin HODLers Grows As Significant Supply Remains Locked",
+      "volume_band": "busy"
+    },
+    {
+      "calendar_year": 2023,
+      "day_volume": 14,
+      "item_id": "99994",
+      "stated_day": "2023-07-06",
+      "title": "Bitcoin Cash Jumps 8% Daily, Bitcoin Challenges $31K Again (Market Watch)",
+      "volume_band": "typical"
+    }
+  ],
+  "seed": 20260928,
+  "size": 210,
+  "strata": [
+    {
+      "allocation": 2,
+      "calendar_year": 2021,
+      "population": 97,
+      "volume_band": "busy"
+    },
+    {
+      "allocation": 7,
+      "calendar_year": 2021,
+      "population": 992,
+      "volume_band": "quiet"
+    },
+    {
+      "allocation": 7,
+      "calendar_year": 2021,
+      "population": 977,
+      "volume_band": "typical"
+    },
+    {
+      "allocation": 12,
+      "calendar_year": 2022,
+      "population": 1808,
+      "volume_band": "busy"
+    },
+    {
+      "allocation": 5,
+      "calendar_year": 2022,
+      "population": 765,
+      "volume_band": "quiet"
+    },
+    {
+      "allocation": 10,
+      "calendar_year": 2022,
+      "population": 1523,
+      "volume_band": "typical"
+    },
+    {
+      "allocation": 12,
+      "calendar_year": 2023,
+      "population": 1675,
+      "volume_band": "busy"
+    },
+    {
+      "allocation": 5,
+      "calendar_year": 2023,
+      "population": 710,
+      "volume_band": "quiet"
+    },
+    {
+      "allocation": 10,
+      "calendar_year": 2023,
+      "population": 1385,
+      "volume_band": "typical"
+    },
+    {
+      "allocation": 80,
+      "calendar_year": 2024,
+      "population": 11609,
+      "volume_band": "busy"
+    },
+    {
+      "allocation": 1,
+      "calendar_year": 2024,
+      "population": 38,
+      "volume_band": "quiet"
+    },
+    {
+      "allocation": 6,
+      "calendar_year": 2024,
+      "population": 874,
+      "volume_band": "typical"
+    },
+    {
+      "allocation": 43,
+      "calendar_year": 2025,
+      "population": 6247,
+      "volume_band": "busy"
+    },
+    {
+      "allocation": 2,
+      "calendar_year": 2025,
+      "population": 317,
+      "volume_band": "quiet"
+    },
+    {
+      "allocation": 8,
+      "calendar_year": 2025,
+      "population": 1234,
+      "volume_band": "typical"
+    }
+  ],
+  "volume_band_edges": [
+    7,
+    17
+  ]
+}

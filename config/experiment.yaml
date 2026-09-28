@@ -85,6 +85,31 @@ news:
   missingness_indicator: false
   votes_and_comments_as_features: false
 
+# The Annotation Sample and the wording rule. Written before the first headline is labelled and
+# before the first Arm C fit, which is what makes it a pre-registration (ADR-0016). The sample gates
+# nothing: Arm C runs whatever the check shows. What it decides is how the result may be described.
+#
+# The threshold is a rule, not a number: agreement is compared against the sample's own
+# majority-class rate over the compared headlines. Against 50% an instrument that answers
+# "positive" to everything would look skilful on a corpus that reads 45% positive.
+annotation:
+  sample_size: 210
+  sample_size_bounds: [150, 300]
+  seed: 20260928
+  strata: [calendar_year, daily_headline_volume_tercile]
+  volume_bands: [quiet, typical, busy]
+  allocation: proportional_largest_remainder
+  labels: [positive, negative, neutral, unclear]
+  unclear_excluded_from_agreement: true
+  agreement_reference: sample_majority_class_rate
+  # Verbatim, and binding on the report and on the page alike.
+  wording_when_agreement_beats_reference: the tone of the news
+  wording_otherwise: the extractor's reading of the headlines
+  # Recorded, not enforced: ADR-0016 accepts one annotator and discloses the consequence in
+  # reports/annotation_sample.md. A second annotator would be a better study, so the contract has no
+  # business refusing to load for it — it would only be a digest change, which is the right ceremony.
+  annotators: 1
+
 preprocessing:
   fitted: within_fold
   imputation: median_within_fold

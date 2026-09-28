@@ -41,7 +41,10 @@ BATCH_SIZE = 32
 SCORE_DECIMALS = 6
 SCORE_TOLERANCE = 1e-6
 
-_LABELS = ("positive", "negative", "neutral")
+# The extractor's own three classes, in the order the tie-break reads. Public because the Annotation
+# Sample compares hand labels against exactly these, and a second copy of the list there would let
+# the two drift apart silently.
+READING_LABELS = ("positive", "negative", "neutral")
 
 # Derived and gitignored, like every other cache: it is reproducible from the archive and the
 # revision, and 30 000 readings do not belong in the history of a repository.
@@ -60,6 +63,22 @@ class Reading:
     def score(self) -> float:
         """The Sentiment Score: positive mass minus negative mass, on [-1, +1]."""
         return round(self.p_positive - self.p_negative, SCORE_DECIMALS)
+
+    @property
+    def reading_label(self) -> str:
+        """The class carrying the most mass — what the Annotation Sample compares against.
+
+        The Sentiment Score cannot serve here: it collapses "neutral" and "torn between positive and
+        negative" into the same neighbourhood of zero, so comparing it to a three-way hand label
+        would not be like for like. Ties break on the frozen `READING_LABELS` order, so the answer
+        does not depend on dictionary iteration.
+        """
+        mass = {
+            "positive": self.p_positive,
+            "negative": self.p_negative,
+            "neutral": self.p_neutral,
+        }
+        return max(READING_LABELS, key=lambda name: (mass[name], -READING_LABELS.index(name)))
 
 
 def text_key(title: str) -> str:
@@ -186,12 +205,12 @@ def _load_extractor(revision: str) -> tuple[Any, Any, Any]:
     model.eval()
     torch.set_num_threads(max(1, (torch.get_num_threads() or 1)))
     labels = {name.lower() for name in model.config.id2label.values()}
-    if labels != set(_LABELS):
+    if labels != set(READING_LABELS):
         raise FatalDefect(
             "sentiment_extractor_unavailable",
             f"{EXTRACTOR_NAME} at {revision} reports labels {sorted(labels)}, expected "
-            f"{sorted(_LABELS)}; the label order is read by name, but an unknown set means a "
-            "different model",
+            f"{sorted(READING_LABELS)}; the label order is read by name, but an unknown set "
+            "means a different model",
         )
     return torch, tokeniser, model
 
