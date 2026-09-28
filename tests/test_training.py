@@ -7,6 +7,7 @@ features are old enough — which is exactly the case a date-only split waves th
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -25,6 +26,7 @@ from cryptoguard_core.metrics import (
 from cryptoguard_core.model import PreviousDirectionBaseline
 from cryptoguard_core.policy import PolicyConfig, Position
 from cryptoguard_core.training import (
+    FittedFold,
     Fold,
     admissible_rows,
     fit_fold,
@@ -245,3 +247,69 @@ class TestContractDrivenProtocol:
         with pytest.raises(FatalDefect) as caught:
             walk_forward(series(400), (Fold(date(2030, 1, 1), date(2030, 3, 31)),))
         assert caught.value.kind == "insufficient_training_rows"
+
+
+class TestAbsentSentiment:
+    """`sentiment_when_absent: median_within_fold`, checked as a composition rather than claimed.
+
+    Arm C's feature builder emits NaN for a day with no available headline (ADR-0021), and the
+    substitution is the preprocessing's existing job. What needs proving is that the two halves
+    meet: that the value a fold substitutes is that fold's median, that it is not zero, and that a
+    NaN day neither poisons the fold's statistics nor reaches the solver.
+    """
+
+    FEATURES = (*ARM_A_FEATURES, "sentiment_mean_24h")
+    INDEX = len(ARM_A_FEATURES)
+
+    def rows(self) -> tuple[DecisionDayRow, ...]:
+        """400 days whose sentiment is quiet early and loud late, absent every seventh day."""
+        out: list[DecisionDayRow] = []
+        for index in range(400):
+            base = row(index, feature_base=index * 0.001)
+            if index % 7 == 0:
+                sentiment = float("nan")
+            elif index < 200:
+                sentiment = 1.0 if index % 2 == 0 else 2.0
+            else:
+                sentiment = 5.0 if index % 2 == 0 else 6.0
+            out.append(replace(base, features={**base.features, "sentiment_mean_24h": sentiment}))
+        return tuple(out)
+
+    def fit(self, first: date) -> FittedFold:
+        return fit_fold(
+            self.rows(),
+            Fold(first, first + timedelta(days=89)),
+            regularisation=(1.0,),
+            features=self.FEATURES,
+        )
+
+    def test_the_substituted_value_is_the_fold_median_and_not_zero(self) -> None:
+        fitted = self.fit(date(2021, 6, 1))
+        others = {name: 0.0 for name in ARM_A_FEATURES}
+        median = fitted.preprocessing.medians[self.INDEX]
+
+        absent = fitted.preprocessing.transform({**others, "sentiment_mean_24h": float("nan")})
+        assert absent == fitted.preprocessing.transform({**others, "sentiment_mean_24h": median})
+        assert absent != fitted.preprocessing.transform({**others, "sentiment_mean_24h": 0.0})
+        assert median == pytest.approx(1.5)
+
+    def test_the_median_is_the_folds_own_and_never_the_windows(self) -> None:
+        """A global median would be the same number in both folds; that is the leak being denied."""
+        early = self.fit(date(2021, 6, 1)).preprocessing.medians[self.INDEX]
+        late = self.fit(date(2022, 4, 1)).preprocessing.medians[self.INDEX]
+        assert early == pytest.approx(1.5)
+        assert late == pytest.approx(3.5)
+
+    def test_an_absent_day_does_not_poison_the_folds_statistics(self) -> None:
+        """NaN in the mean or the spread would make every transformed row NaN, silently."""
+        preprocessing = self.fit(date(2021, 6, 1)).preprocessing
+        for index in range(len(self.FEATURES)):
+            assert preprocessing.medians[index] == preprocessing.medians[index]
+            assert preprocessing.means[index] == preprocessing.means[index]
+            assert preprocessing.stds[index] == preprocessing.stds[index]
+
+    def test_no_column_tells_the_model_that_a_day_was_imputed(self) -> None:
+        """`missingness_indicator: false`. The consequence is disclosed, not patched."""
+        preprocessing = self.fit(date(2021, 6, 1)).preprocessing
+        assert preprocessing.features == self.FEATURES
+        assert not [name for name in preprocessing.features if "missing" in name]

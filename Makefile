@@ -123,6 +123,12 @@ data-daily: ## Fetch one month of daily archives, e.g. make data-daily MONTH=202
 data-news: ## Fetch the news archive and verify both digests
 	./scripts/fetch_news_archive.sh
 
+.PHONY: data-sentiment
+data-sentiment: ## Score the BTC headlines with the frozen extractor, filling its cache
+	@# Not part of `data`: that target fetches raw archives, this one derives from one. Idempotent —
+	@# a second run loads no model, because every reading is cached by (text_hash, revision).
+	uv run python scripts/score_news_sentiment.py
+
 .PHONY: audit
 audit: ## Re-run every data audit against the local snapshots
 	uv run python scripts/audit/audit_binance_archives.py

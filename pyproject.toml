@@ -28,6 +28,13 @@ dev = [
     "types-requests>=2.32",
     "httpx2>=2.13.1",
 ]
+# The Sentiment Extractor is a measuring instrument used offline to fill a cache, not part of the
+# price-only product. Keeping it in its own group lets a deployment that ships Arm A install without
+# ~2 GB of tensor libraries: `uv sync --no-group research`.
+research = [
+    "torch>=2.4",
+    "transformers>=4.44",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -41,6 +48,9 @@ packages = [
 ]
 
 [tool.uv]
+# `make setup-python` is `uv sync`, and the research group must land in a developer checkout: the
+# extractor is how Arm C's features exist at all.
+default-groups = ["dev", "research"]
 # The README promises an interpreter that does not come from the system or from conda. Without this
 # the promise rests on uv's default preference, which an environment variable can flip.
 python-preference = "only-managed"

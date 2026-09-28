@@ -68,6 +68,19 @@ news:
   primary_lag_hours: 24
   # Measured, not assumed: the busiest eight consecutive hours start at 09:00, one hour outside the
   # pre-registered 10:00-16:00 band, so the rule gives 24. The margin is 1.10%; see the audit.
+  # The Sentiment Extractor: a frozen instrument, pinned to a commit rather than a moving tag, and
+  # matched against the code constants in cryptoguard_core.sentiment. ADR-0015 and ADR-0021.
+  #   Sentiment Score = p(positive) - p(negative), rounded to score_decimals, on [-1, +1]
+  #   sentiment_mean_24h / sentiment_mean_7d = unweighted means over Availability Windows ending at
+  #   the Feature Cutoff; the 7-day window contains the 24-hour one, because a mean cannot saturate
+  # Reproducible to 1e-6, not bitwise: padding and the batch dimension change which kernels run.
+  sentiment_extractor:
+    name: ProsusAI/finbert
+    revision: 4556d13015211d73dccd3fdd39d39232506f3e43
+    max_tokens: 64
+    score_decimals: 6
+    device: cpu
+    fine_tuned: false
   sentiment_when_absent: median_within_fold
   missingness_indicator: false
   votes_and_comments_as_features: false

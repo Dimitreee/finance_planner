@@ -20,10 +20,12 @@ from datetime import UTC, date, datetime, timedelta
 from cryptoguard_core.ingest import HOUR_MS, Bar, FatalDefect
 from cryptoguard_core.news_features import (
     ARM_B_EXTRA_FEATURES,
+    ARM_C_EXTRA_FEATURES,
     NEWS_FEATURE_NAMES,
     HeadlineAvailability,
     headline_count_features,
     require_news_span,
+    sentiment_features,
 )
 
 DAY_MS = 24 * HOUR_MS
@@ -49,7 +51,12 @@ ARM_A_FEATURES = (
 FEATURES_BY_ARM: Mapping[str, tuple[str, ...]] = {
     "a": ARM_A_FEATURES,
     "b": ARM_A_FEATURES + ARM_B_EXTRA_FEATURES,
+    "c": ARM_A_FEATURES + ARM_B_EXTRA_FEATURES + ARM_C_EXTRA_FEATURES,
 }
+# Arm C additionally needs a Sentiment Score beside every instant, which Arm B does not.
+ARMS_NEEDING_SENTIMENT = frozenset(
+    arm for arm, features in FEATURES_BY_ARM.items() if set(ARM_C_EXTRA_FEATURES) & set(features)
+)
 # Derived, not maintained by hand: an arm reads news exactly when its features include a news
 # feature. A second hand-written list would let a new arm be added to one and missed in the other.
 ARMS_NEEDING_NEWS = frozenset(
@@ -220,6 +227,8 @@ def _features(
 
     if news is not None:
         features.update(headline_count_features(news, cutoff_ms))
+        if news.scores is not None:
+            features.update(sentiment_features(news, cutoff_ms))
     return features
 
 
@@ -257,6 +266,18 @@ def build_decision_day_rows(
         raise FatalDefect(
             "arm_requires_news",
             f"arm {arm!r} carries news features, so it needs headline availability to be built",
+        )
+    if arm in ARMS_NEEDING_SENTIMENT and (news is None or news.scores is None):
+        raise FatalDefect(
+            "arm_requires_sentiment",
+            f"arm {arm!r} carries sentiment features, so it needs an availability set whose "
+            "instants each carry a Sentiment Score",
+        )
+    if arm not in ARMS_NEEDING_SENTIMENT and news is not None and news.scores is not None:
+        raise FatalDefect(
+            "arm_takes_no_sentiment",
+            f"arm {arm!r} names no sentiment feature; scoring it here would build a column it "
+            "does not declare",
         )
     if arm not in ARMS_NEEDING_NEWS and news is not None:
         raise FatalDefect(

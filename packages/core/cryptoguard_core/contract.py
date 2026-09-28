@@ -43,6 +43,12 @@ from cryptoguard_core.protocol import (
     FEATURE_CUTOFF_UTC,
     HORIZON_DAYS,
 )
+from cryptoguard_core.sentiment import (
+    EXTRACTOR_NAME,
+    EXTRACTOR_REVISION,
+    MAX_TOKENS,
+    SCORE_DECIMALS,
+)
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 CONTRACT_PATH = _REPO_ROOT / "config/experiment.yaml"
@@ -193,6 +199,23 @@ def _check(values: Mapping[str, Any]) -> None:
         _refuse(f"news.lag_grid_hours {news['lag_grid_hours']} != {list(LAG_GRID_HOURS)}")
     if news["primary_lag_hours"] not in LAG_GRID_HOURS:
         _refuse(f"news.primary_lag_hours {news['primary_lag_hours']} is not in the frozen lag grid")
+    extractor = news["sentiment_extractor"]
+    pinned = {
+        "name": EXTRACTOR_NAME,
+        "revision": EXTRACTOR_REVISION,
+        "max_tokens": MAX_TOKENS,
+        "score_decimals": SCORE_DECIMALS,
+    }
+    for key, expected in pinned.items():
+        if extractor[key] != expected:
+            _refuse(
+                f"news.sentiment_extractor.{key} is {extractor[key]!r}, but the code states "
+                f"{expected!r}"
+            )
+    if extractor["fine_tuned"] is not False:
+        _refuse("the Sentiment Extractor is frozen by ADR-0015; fine_tuned must be false")
+    if extractor["device"] != "cpu":
+        _refuse("inference runs on CPU, because a dataset's numbers must be CPU-reproducible")
 
     policy = values["policy"]
     if not policy["to_usdt_at"] < policy["to_btc_at"]:

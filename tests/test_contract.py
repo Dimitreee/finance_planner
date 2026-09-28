@@ -405,3 +405,27 @@ def test_the_contract_must_match_the_frozen_lag_grid(tmp_path: Path) -> None:
     with pytest.raises(FatalDefect) as caught:
         load_contract(broken)
     assert caught.value.kind == "contract_inconsistent"
+
+
+def test_the_contract_pins_the_sentiment_extractor_to_the_code(tmp_path: Path) -> None:
+    """A moving revision would let the instrument change under a finished dataset."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        "    revision: 4556d13015211d73dccd3fdd39d39232506f3e43", "    revision: main", 1
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"
+
+
+def test_a_fine_tuned_extractor_is_refused_by_the_contract(tmp_path: Path) -> None:
+    """ADR-0015: the extractor is an instrument, never a model fitted on this project's data."""
+    text = CONTRACT_PATH.read_text(encoding="utf-8").replace(
+        "    fine_tuned: false", "    fine_tuned: true", 1
+    )
+    broken = tmp_path / "experiment.yaml"
+    broken.write_text(text, encoding="utf-8")
+    with pytest.raises(FatalDefect) as caught:
+        load_contract(broken)
+    assert caught.value.kind == "contract_inconsistent"

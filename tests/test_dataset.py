@@ -16,6 +16,7 @@ import pytest
 from conftest import SNAPSHOT, hourly_series
 from cryptoguard_core.dataset import (
     ARM_A_FEATURES,
+    FEATURES_BY_ARM,
     RESEARCH_WINDOW_FIRST_DAY,
     RESEARCH_WINDOW_LAST_DAY,
     DecisionDayRow,
@@ -25,6 +26,7 @@ from cryptoguard_core.ingest import HOUR_MS, Bar, FatalDefect, load_archive_back
 from cryptoguard_core.news import NewsItem
 from cryptoguard_core.news_features import (
     ARM_B_EXTRA_FEATURES,
+    ARM_C_EXTRA_FEATURES,
     HeadlineAvailability,
     headline_availability,
 )
@@ -425,3 +427,38 @@ def test_a_build_reaching_past_the_news_archives_coverage_is_fatal() -> None:
     with pytest.raises(FatalDefect) as caught:
         build_decision_day_rows(bars, FIRST_DAY, LAST_DAY, arm="b", news=short)
     assert caught.value.kind == "news_coverage_underrun"
+
+
+def test_arm_c_carries_eleven_features_because_the_arms_are_cumulative() -> None:
+    """Price, then headline count, then sentiment. ADR-0015's arithmetic was corrected for this."""
+    assert FEATURES_BY_ARM["c"] == ARM_A_FEATURES + ARM_B_EXTRA_FEATURES + ARM_C_EXTRA_FEATURES
+    assert len(FEATURES_BY_ARM["c"]) == 11
+
+
+def test_arm_c_without_sentiment_scores_is_refused() -> None:
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    with pytest.raises(FatalDefect) as caught:
+        build_decision_day_rows(
+            bars,
+            FIRST_DAY,
+            LAST_DAY,
+            arm="c",
+            news=availability(datetime(2021, 1, 31, 6, tzinfo=UTC)),
+        )
+    assert caught.value.kind == "arm_requires_sentiment"
+
+
+def test_arm_b_handed_sentiment_scores_is_refused() -> None:
+    """Accepting them would build a column Arm B does not declare."""
+    bars = hourly_series(SERIES_START, SERIES_HOURS, quote=RISING)
+    scored = availability(datetime(2021, 1, 31, 6, tzinfo=UTC))
+    with_scores = HeadlineAvailability(
+        asset=scored.asset,
+        lag_hours=scored.lag_hours,
+        instants_ms=scored.instants_ms,
+        covers_through_ms=scored.covers_through_ms,
+        scores=tuple(0.1 for _ in scored.instants_ms),
+    )
+    with pytest.raises(FatalDefect) as caught:
+        build_decision_day_rows(bars, FIRST_DAY, LAST_DAY, arm="b", news=with_scores)
+    assert caught.value.kind == "arm_takes_no_sentiment"

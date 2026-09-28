@@ -77,6 +77,10 @@ class HeadlineAvailability:
     lag_hours: int
     instants_ms: tuple[int, ...]
     covers_through_ms: int
+    # One Sentiment Score per instant, in the same order, or None when no extractor has been run.
+    # Arm B needs only the instants; Arm C needs both, and asking for a mean without them is
+    # refused rather than filled with a zero, because absence of news is not neutral sentiment.
+    scores: tuple[float, ...] | None = None
 
     def __post_init__(self) -> None:
         # Derivable, so checked rather than trusted: `count_in` bisects, and an unsorted sequence
@@ -90,9 +94,39 @@ class HeadlineAvailability:
                 "availability instants must be sorted; count_in bisects them",
             )
 
+        if self.scores is not None and len(self.scores) != len(self.instants_ms):
+            raise FatalDefect(
+                "news_scores_misaligned",
+                f"{len(self.scores)} Sentiment Scores for {len(self.instants_ms)} instants; "
+                "they are parallel arrays and a silent mismatch would mis-attribute every score",
+            )
+
     @property
     def earliest_ms(self) -> int | None:
         return self.instants_ms[0] if self.instants_ms else None
+
+    def _slice(self, *, after_ms: int, through_ms: int) -> tuple[int, int]:
+        return (
+            bisect.bisect_right(self.instants_ms, after_ms),
+            bisect.bisect_right(self.instants_ms, through_ms),
+        )
+
+    def mean_score_in(self, *, after_ms: int, through_ms: int) -> float:
+        """The unweighted mean Sentiment Score in the window, or NaN when the window is empty.
+
+        NaN rather than zero: the in-fold median imputer consumes NaN, and zero would assert that
+        the window's headlines were read as neutral when there were no headlines to read.
+        """
+        if self.scores is None:
+            raise FatalDefect(
+                "news_scores_absent",
+                "this availability set carries no Sentiment Scores, so no mean exists; "
+                "build it through the extractor rather than defaulting the value",
+            )
+        start, end = self._slice(after_ms=after_ms, through_ms=through_ms)
+        if end == start:
+            return math.nan
+        return math.fsum(self.scores[start:end]) / (end - start)
 
     def count_in(self, *, after_ms: int, through_ms: int) -> int:
         """Items available in `(after_ms, through_ms]`: open at the far edge, closed at the cutoff.
@@ -101,8 +135,7 @@ class HeadlineAvailability:
         00:00. Open at the far edge so that adjacent windows partition the timeline rather than
         sharing an instant.
         """
-        start = bisect.bisect_right(self.instants_ms, after_ms)
-        end = bisect.bisect_right(self.instants_ms, through_ms)
+        start, end = self._slice(after_ms=after_ms, through_ms=through_ms)
         return end - start
 
 
@@ -188,4 +221,21 @@ def headline_count_features(availability: HeadlineAvailability, cutoff_ms: int) 
     return {
         "news_count_24h_log1p": math.log1p(recent),
         "news_count_24h_over_7d_mean": recent / mean_daily,
+    }
+
+
+def sentiment_features(availability: HeadlineAvailability, cutoff_ms: int) -> dict[str, float]:
+    """Arm C's two features: the mean Sentiment Score over 24 hours and over 7 days.
+
+    Both windows end at the Feature Cutoff and the seven-day window contains the recent one. A mean
+    is a level, not a ratio, so nesting cannot saturate it — the reason Arm B's baseline excludes
+    today and this one does not (ADR-0021).
+    """
+    return {
+        "sentiment_mean_24h": availability.mean_score_in(
+            after_ms=cutoff_ms - COUNT_WINDOW_DAYS * DAY_MS, through_ms=cutoff_ms
+        ),
+        "sentiment_mean_7d": availability.mean_score_in(
+            after_ms=cutoff_ms - BASELINE_WINDOW_DAYS * DAY_MS, through_ms=cutoff_ms
+        ),
     }
