@@ -108,18 +108,3 @@ a price chart. See `apps/web/README.md`.
 
 Raw datasets, model weights and caches stay out of git; `uv.lock` and the hash manifests under
 `data/manifests` are committed, so a result can be reproduced from a recorded input.
-
-## Where the thinking lives
-
-**These paths are deliberately not tracked in git, so a fresh clone will not contain them.** They exist
-in the working copy and are the normative reference for anyone working on this repository:
-
-- `CONTEXT.md` — the glossary. Every domain term used in the code is defined there.
-- `docs/adr/` — the decisions, each with the alternatives that were rejected and why.
-- `JOURNAL.md` — dated record of what was decided, what broke and what was measured.
-- `reports/` — audits and evaluations.
-- `.scratch/` — specs and implementation tickets.
-
-Keeping them out of version control was a deliberate choice recorded in `JOURNAL.md` on 2026-09-27. The
-consequence is that the design history lives in dated journal entries rather than in commits, and that
-tracked files do not cite these documents by filename.
