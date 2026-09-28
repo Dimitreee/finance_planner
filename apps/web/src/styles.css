@@ -1,117 +1,333 @@
-/* Mobile first. Everything is a single column that grows; nothing is pinned to a pixel width, so
-   the page is readable at 320px and still comfortable on a laptop. */
+/* One visual system for the whole page.
+ *
+ * The subject is an instrument, not a brochure: this advisor's own measurement says its forecast has
+ * no skill and its development-period returns were luck. So the page is built to make an
+ * uncomfortable reading legible — cool neutrals, tabular figures treated as the content they are,
+ * and exactly one place where the type gets loud (today's action).
+ *
+ * Every colour, step of type and step of space is a token declared once here. A panel that carried
+ * its own hex would be a panel that looked right in one scheme and washed out in the other, which is
+ * the failure this file exists to prevent.
+ *
+ * Dark mode is *selected*, not flipped: the series hues are the dark steps of the same two ramps,
+ * re-validated against the dark surface. Declared under both `prefers-color-scheme` and
+ * `[data-theme]` so an explicit choice beats the OS setting either way.
+ */
 
 :root {
-  --ink: #16181d;
-  --muted: #5a6472;
-  --line: #dfe3ea;
+  color-scheme: light;
+
+  /* Type: a minor third (1.2) from a 16px base. Stated as a scale so a panel cannot invent a size. */
+  --text-xs: 0.833rem;
+  --text-sm: 0.9rem;
+  --text-base: 1rem;
+  --text-md: 1.2rem;
+  --text-lg: 1.44rem;
+  --text-xl: 1.728rem;
+
+  /* Space: 4px base. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --measure: 44rem;
+
+  /* Surfaces and ink. Cool neutrals on purpose: warm paper would read as editorial, and this page
+     is a readout. */
+  --page: #eef1f5;
   --surface: #ffffff;
-  --page: #f5f6f8;
-  --accent: #1d4ed8;
-  --warn: #92400e;
-  --warn-bg: #fef3c7;
-  --bad: #991b1b;
-  --bad-bg: #fee2e2;
+  --sunken: #f4f6f9;
+  --ink: #14171c;
+  --ink-2: #4a5462;
+  --muted: #6b7684;
+  --line: #d9dfe7;
+
+  /* Series identity, fixed for the whole page: the market keeps one colour wherever it is drawn, and
+     so does the strategy. Slots 1 and 2 of the validated categorical order; checked with the
+     dataviz validator against these exact surfaces, all-pairs, both modes — worst CVD ΔE 24.7 light
+     and 26.8 dark against a ≥8 target, both ≥3:1 on their surface.
+     Cash is deliberately not a hue. It is a constant zero, and a colour would imply it moves. */
+  --series-strategy: #2a78d6;
+  --series-market: #eb6834;
+  --series-cash: #6b7684;
+
+  /* Status is reserved: never reused as a series colour, and always shipped with a word beside it. */
   --good: #14532d;
   --good-bg: #dcfce7;
+  --warn: #7c3a06;
+  --warn-bg: #fdf0d2;
+  --bad: #991b1b;
+  --bad-bg: #fde4e4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d1014;
+    --surface: #15191f;
+    --sunken: #1b2027;
+    --ink: #f1f4f8;
+    --ink-2: #b4bfcb;
+    --muted: #8a95a3;
+    --line: #262d36;
+    --series-strategy: #3987e5;
+    --series-market: #d95926;
+    --series-cash: #8a95a3;
+    --good: #86efac;
+    --good-bg: #0c2f1c;
+    --warn: #fcd34d;
+    --warn-bg: #3a2a08;
+    --bad: #fca5a5;
+    --bad-bg: #3a1414;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d1014;
+  --surface: #15191f;
+  --sunken: #1b2027;
+  --ink: #f1f4f8;
+  --ink-2: #b4bfcb;
+  --muted: #8a95a3;
+  --line: #262d36;
+  --series-strategy: #3987e5;
+  --series-market: #d95926;
+  --series-cash: #8a95a3;
+  --good: #86efac;
+  --good-bg: #0c2f1c;
+  --warn: #fcd34d;
+  --warn-bg: #3a2a08;
+  --bad: #fca5a5;
+  --bad-bg: #3a1414;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
+  /* An explicit background in both schemes. Without it a dark-mode browser paints white behind a
+     transparent body and every token below is fighting a surface nobody declared. */
   background: var(--page);
   color: var(--ink);
-  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font: var(--text-base) / 1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Figures are the content of this page, so they get a treatment rather than inheriting prose.
+   Tabular so a column of returns lines up, and slightly tightened so a long number stays compact. */
+.facts dd,
+.position__holdings,
+.track__value,
+.scenarios {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .page {
-  max-width: 44rem;
+  max-width: var(--measure);
   margin: 0 auto;
-  padding: 1.5rem 1rem 4rem;
+  /* 1rem of gutter at 360px leaves a 328px column: enough for the longest figure without wrapping. */
+  padding: var(--space-5) var(--space-4) var(--space-7);
 }
 
-.page__head h1 { margin: 0 0 0.25rem; font-size: 1.5rem; letter-spacing: -0.01em; }
-.page__subtitle { margin: 0 0 1.5rem; color: var(--muted); }
+.page__head h1 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-lg);
+  letter-spacing: -0.02em;
+}
+
+.page__subtitle {
+  margin: 0 0 var(--space-5);
+  color: var(--ink-2);
+  max-width: 34rem;
+}
 
 .panel {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 30rem) {
+  .panel { padding: var(--space-5); }
 }
 
 .panel__head {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.5rem 0.75rem;
-  margin-bottom: 0.75rem;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
-.panel__head h2 { margin: 0; font-size: 1.05rem; }
+.panel__head h2 {
+  margin: 0;
+  font-size: var(--text-base);
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+}
 
 .badge {
-  font-size: 0.8rem;
-  padding: 0.15rem 0.5rem;
+  font-size: var(--text-xs);
+  padding: 0.15rem var(--space-2);
   border-radius: 999px;
-  background: var(--page);
-  color: var(--muted);
+  background: var(--sunken);
+  color: var(--ink-2);
+  white-space: nowrap;
 }
+.badge--neutral { background: var(--sunken); color: var(--ink-2); }
 .badge--current { background: var(--good-bg); color: var(--good); }
 .badge--stale { background: var(--warn-bg); color: var(--warn); }
 .badge--unavailable { background: var(--bad-bg); color: var(--bad); }
 
+/* The one loud thing on the page. A reader came for this sentence; everything else is quiet. */
 .headline {
-  font-size: 1.4rem;
-  font-weight: 600;
-  line-height: 1.3;
-  margin: 0 0 0.5rem;
+  font-size: var(--text-xl);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin: 0 0 var(--space-3);
+  text-wrap: balance;
 }
 
-.meaning, .horizon { margin: 0 0 0.5rem; color: var(--muted); }
+.meaning,
+.horizon {
+  margin: 0 0 var(--space-2);
+  color: var(--ink-2);
+}
 
 .facts {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.6rem;
-  margin: 1rem 0;
-  padding: 0.9rem;
-  background: var(--page);
-  border-radius: 8px;
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  background: var(--sunken);
+  border-radius: var(--radius-sm);
 }
-.facts div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; }
-.facts dt { color: var(--muted); margin: 0; }
-.facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+.facts div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.facts dt { color: var(--muted); margin: 0; font-size: var(--text-sm); }
+.facts dd { margin: 0; }
 
-.explanation { margin: 0 0 1rem; }
+.explanation { margin: 0 0 var(--space-4); }
 
-.position { border-top: 1px solid var(--line); padding-top: 0.9rem; }
-.position h3 { margin: 0 0 0.35rem; font-size: 0.95rem; }
-.position__warning { margin: 0 0 0.4rem; color: var(--warn); }
-.position__holdings { margin: 0; font-variant-numeric: tabular-nums; }
+/* "This holds no real funds" is one of the two sentences the page exists to make unmissable, so it
+   gets structure rather than being another grey paragraph. */
+.position {
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-3);
+}
+.position h3 { margin: 0 0 var(--space-1); font-size: var(--text-sm); color: var(--muted); }
+.position__warning {
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font-size: var(--text-sm);
+}
+.position__holdings { margin: 0; }
 
-.freshness-note { margin: 1rem 0 0; color: var(--muted); }
+.freshness-note { margin: var(--space-4) 0 0; color: var(--muted); font-size: var(--text-sm); }
 
-.track__caveat { margin: 0 0 0.6rem; color: var(--muted); }
-.track__value { margin: 0 0 1rem; font-variant-numeric: tabular-nums; }
+.track__caveat { margin: 0 0 var(--space-2); color: var(--ink-2); }
+.track__value { margin: 0 0 var(--space-4); }
 
 /* A <figure> carries a 40px browser default margin on each side: a quarter of a 320px screen. */
 .chart { margin: 0; }
 .chart svg { width: 100%; height: 10rem; display: block; }
-.chart polyline { stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; }
-.chart figcaption { margin-top: 0.4rem; color: var(--muted); font-size: 0.85rem; }
+.chart polyline {
+  /* The market keeps the market's colour, here and in every panel that draws it. */
+  stroke: var(--series-market);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.chart figcaption { margin-top: var(--space-2); color: var(--muted); font-size: var(--text-sm); }
 .chart--empty { color: var(--muted); }
 
-.notice { padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.notice {
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+}
 .notice--bad { background: var(--bad-bg); border-color: transparent; color: var(--bad); }
 
-.scenarios { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.scenarios th, .scenarios td { padding: 0.4rem 0.3rem; text-align: right; border-bottom: 1px solid var(--line); }
-.scenarios thead th { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
-.scenarios th[scope="row"] { text-align: left; font-weight: 500; }
-.scenarios__headline { background: var(--page); }
-.scenarios__tag { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+/* Six columns of figures cannot fit 360px, and dropping one would remove information. So the table
+   scrolls inside its own box while the page itself never does. */
+.scenarios__scroll {
+  overflow-x: auto;
+  margin-inline: calc(-1 * var(--space-1));
+  padding-inline: var(--space-1);
+}
 
-.warning { margin: 0.6rem 0 0; padding: 0.7rem 0.8rem; border-radius: 8px; background: var(--warn-bg); color: var(--warn); }
+.scenarios {
+  width: 100%;
+  min-width: 26rem;
+  border-collapse: collapse;
+}
+.scenarios th,
+.scenarios td {
+  padding: var(--space-2) var(--space-1);
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.scenarios thead th {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  vertical-align: bottom;
+}
+.scenarios th[scope="row"] { text-align: left; font-weight: 500; }
+.scenarios__headline { background: var(--sunken); }
+.scenarios__tag { color: var(--muted); font-weight: 400; font-size: var(--text-xs); }
+
+/* Identity travels as a mark beside the label, never as coloured text: a heading tinted with a
+   series hue reads as emphasis, and the hue is not emphasis, it is which line this is. */
+.swatch {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.2em;
+  border-radius: 999px;
+  margin-right: 0.35em;
+  vertical-align: 0.15em;
+}
+.swatch--strategy { background: var(--series-strategy); }
+.swatch--market { background: var(--series-market); }
+.swatch--cash { background: var(--series-cash); }
+
+/* The other sentence the page exists to make unmissable. A finding, not an error: it is warned, not
+   alarmed, and it always ships with words rather than colour alone. */
+.warning {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--series-strategy);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
