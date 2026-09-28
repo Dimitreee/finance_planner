@@ -124,7 +124,7 @@ def create_app(
         # day and cannot read on an empty one, which is the day nobody tests by hand.
         #
         # Nulls rather than zeros for the three scalars. A window of zero days and a starting
-        # capital # of 0 are both readable as measurements, and neither was measured.
+        # capital of 0 are both readable as measurements, and neither was measured.
         empty: dict[str, Any] = {
             "asset": asset,
             "model_mode": first.model_mode if first else None,
