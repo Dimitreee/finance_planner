@@ -1,0 +1,252 @@
+{
+  "beats_buy_and_hold": true,
+  "confidence": 0.95,
+  "contract_digest": "7bb61b1b29bf3e6b9105eb10cfd35873adfa7c764d2b134d166d10904d5c24e5",
+  "cost_sensitive": false,
+  "days": 1096,
+  "headline_cost_scenario": "base",
+  "promoted_arm": "A",
+  "quantities": [
+    {
+      "caption": "evidence: this interval may inform a conclusion about forecasting skill (ADR-0017)",
+      "cost_scenario": null,
+      "intervals": [
+        {
+          "block_days": 20,
+          "estimate": 0.005496766253506158,
+          "lower": 0.0003627761020131178,
+          "role": "reported",
+          "seed": 20260928,
+          "upper": 0.011627846273211534,
+          "verdict": "Separated",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Separated",
+            "20260930": "Separated",
+            "20261001": "Separated",
+            "20261002": "Separated"
+          }
+        },
+        {
+          "block_days": 5,
+          "estimate": 0.005496766253506158,
+          "lower": 0.0007474135865820487,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 0.010462782252872166,
+          "verdict": "Separated",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Separated",
+            "20260930": "Separated",
+            "20261001": "Separated",
+            "20261002": "Separated"
+          }
+        },
+        {
+          "block_days": 40,
+          "estimate": 0.005496766253506158,
+          "lower": 2.1149872042398555e-05,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 0.01269114529380103,
+          "verdict": "Separated",
+          "verdict_stable_across_seeds": false,
+          "verdicts_by_stability_seed": {
+            "20260929": "Separated",
+            "20260930": "Separated",
+            "20261001": "Inconclusive",
+            "20261002": "Separated"
+          }
+        }
+      ],
+      "name": "paired daily log-loss difference, C@24 minus A",
+      "reported_verdict_stable_across_seeds": true,
+      "seed_dependent_block_days": [
+        40
+      ],
+      "standing": "evidence",
+      "units": "natural"
+    },
+    {
+      "caption": "description: this interval informs nothing and selects nothing (ADR-0007)",
+      "cost_scenario": "optimistic",
+      "intervals": [
+        {
+          "block_days": 20,
+          "estimate": 0.6028167384662189,
+          "lower": -8.894203942746616,
+          "role": "reported",
+          "seed": 20260928,
+          "upper": 3.170675835132114,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 5,
+          "estimate": 0.6028167384662189,
+          "lower": -8.64668662395581,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 3.4871181936900286,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 40,
+          "estimate": 0.6028167384662189,
+          "lower": -9.8964887609555,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 3.3074211894194456,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        }
+      ],
+      "name": "net cumulative return after costs minus buy-and-hold, arm A, optimistic costs",
+      "reported_verdict_stable_across_seeds": true,
+      "seed_dependent_block_days": [],
+      "standing": "description",
+      "units": "percent"
+    },
+    {
+      "caption": "description: this interval informs nothing and selects nothing (ADR-0007)",
+      "cost_scenario": "base",
+      "intervals": [
+        {
+          "block_days": 20,
+          "estimate": 0.557523413784085,
+          "lower": -8.941191532986897,
+          "role": "reported",
+          "seed": 20260928,
+          "upper": 3.0828495898693307,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 5,
+          "estimate": 0.557523413784085,
+          "lower": -8.667538658633475,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 3.382251891743718,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 40,
+          "estimate": 0.557523413784085,
+          "lower": -9.931099336952562,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 3.2137684173117482,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        }
+      ],
+      "name": "net cumulative return after costs minus buy-and-hold, arm A, base costs (headline)",
+      "reported_verdict_stable_across_seeds": true,
+      "seed_dependent_block_days": [],
+      "standing": "description",
+      "units": "percent"
+    },
+    {
+      "caption": "description: this interval informs nothing and selects nothing (ADR-0007)",
+      "cost_scenario": "pessimistic",
+      "intervals": [
+        {
+          "block_days": 20,
+          "estimate": 0.391002422329191,
+          "lower": -9.111278257835561,
+          "role": "reported",
+          "seed": 20260928,
+          "upper": 2.748102629578303,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 5,
+          "estimate": 0.391002422329191,
+          "lower": -8.869045841828083,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 2.9695202755390566,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 40,
+          "estimate": 0.391002422329191,
+          "lower": -10.137148065554817,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 2.843575143272325,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        }
+      ],
+      "name": "net cumulative return after costs minus buy-and-hold, arm A, pessimistic costs",
+      "reported_verdict_stable_across_seeds": true,
+      "seed_dependent_block_days": [],
+      "standing": "description",
+      "units": "percent"
+    }
+  ],
+  "reported_block_days": 20,
+  "resamples": 10000,
+  "seed": 20260928
+}

@@ -1,0 +1,148 @@
+{
+  "arms": [
+    {
+      "accuracy": 0.5009124087591241,
+      "arm": "A",
+      "brier": 0.25059577870170197,
+      "buy_and_hold_return": 0.9785495888501536,
+      "headline_return": 1.5360730026342413,
+      "lag_hours": null,
+      "log_loss": 0.6943589668354004,
+      "scored_days": 1096,
+      "trades": 28,
+      "trial_number": null
+    },
+    {
+      "accuracy": 0.5063868613138686,
+      "arm": "B",
+      "brier": 0.2511318784882232,
+      "buy_and_hold_return": 0.9785495888501536,
+      "headline_return": 0.8192310545140624,
+      "lag_hours": 1,
+      "log_loss": 0.6954328009717414,
+      "scored_days": 1096,
+      "trades": 20,
+      "trial_number": 3
+    },
+    {
+      "accuracy": 0.4954379562043796,
+      "arm": "B",
+      "brier": 0.2511778895435031,
+      "buy_and_hold_return": 0.9785495888501536,
+      "headline_return": 1.0365078986495906,
+      "lag_hours": 6,
+      "log_loss": 0.6955268546030619,
+      "scored_days": 1096,
+      "trades": 24,
+      "trial_number": 4
+    },
+    {
+      "accuracy": 0.4972627737226277,
+      "arm": "B",
+      "brier": 0.25279402417430424,
+      "buy_and_hold_return": 0.9785495888501536,
+      "headline_return": -0.33404839046239754,
+      "lag_hours": 24,
+      "log_loss": 0.6988317119985823,
+      "scored_days": 1096,
+      "trades": 41,
+      "trial_number": 5
+    },
+    {
+      "accuracy": 0.4972627737226277,
+      "arm": "C",
+      "brier": 0.25164172915886335,
+      "buy_and_hold_return": 0.9785495888501536,
+      "headline_return": 1.0176751063822698,
+      "lag_hours": 1,
+      "log_loss": 0.6964675242336839,
+      "scored_days": 1096,
+      "trades": 22,
+      "trial_number": 6
+    },
+    {
+      "accuracy": 0.49452554744525545,
+      "arm": "C",
+      "brier": 0.25202466874242785,
+      "buy_and_hold_return": 0.9785495888501536,
+      "headline_return": 1.4096995441811235,
+      "lag_hours": 6,
+      "log_loss": 0.697251992701894,
+      "scored_days": 1096,
+      "trades": 32,
+      "trial_number": 7
+    },
+    {
+      "accuracy": 0.49635036496350365,
+      "arm": "C",
+      "brier": 0.2532805744102371,
+      "buy_and_hold_return": 0.9785495888501536,
+      "headline_return": 0.01152585020756458,
+      "lag_hours": 24,
+      "log_loss": 0.6998557330889084,
+      "scored_days": 1096,
+      "trades": 43,
+      "trial_number": 8
+    }
+  ],
+  "contract_digest": "fa3597c129003b9a878802b663208cf068def4ace762823ce1bf1f1e44406e69",
+  "no_skill_log_loss": 0.6931,
+  "paired_differences": [
+    {
+      "baseline": "A",
+      "baseline_log_loss": 0.6943589668354012,
+      "days": 1096,
+      "is_primary": false,
+      "mean_difference": 0.001073834136340341,
+      "treatment": "B@1",
+      "treatment_log_loss": 0.6954328009717416
+    },
+    {
+      "baseline": "A",
+      "baseline_log_loss": 0.6943589668354012,
+      "days": 1096,
+      "is_primary": false,
+      "mean_difference": 0.0011678877676609524,
+      "treatment": "B@6",
+      "treatment_log_loss": 0.6955268546030622
+    },
+    {
+      "baseline": "A",
+      "baseline_log_loss": 0.6943589668354012,
+      "days": 1096,
+      "is_primary": false,
+      "mean_difference": 0.0044727451631807235,
+      "treatment": "B@24",
+      "treatment_log_loss": 0.698831711998582
+    },
+    {
+      "baseline": "A",
+      "baseline_log_loss": 0.6943589668354012,
+      "days": 1096,
+      "is_primary": false,
+      "mean_difference": 0.0021085573982827506,
+      "treatment": "C@1",
+      "treatment_log_loss": 0.696467524233684
+    },
+    {
+      "baseline": "A",
+      "baseline_log_loss": 0.6943589668354012,
+      "days": 1096,
+      "is_primary": false,
+      "mean_difference": 0.0028930258664925193,
+      "treatment": "C@6",
+      "treatment_log_loss": 0.6972519927018938
+    },
+    {
+      "baseline": "A",
+      "baseline_log_loss": 0.6943589668354012,
+      "days": 1096,
+      "is_primary": true,
+      "mean_difference": 0.005496766253506158,
+      "treatment": "C@24",
+      "treatment_log_loss": 0.6998557330889075
+    }
+  ],
+  "primary_comparison": "C@24 vs A",
+  "scored_development_days": 1096
+}

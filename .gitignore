@@ -18,10 +18,21 @@ models/
 # below can take effect. A file whose parent directory is excluded cannot be re-included at all, so
 # excluding the directory itself would make the exception silently do nothing.
 artifacts/*
-# That one exception is the point of ADR-0018. The Final Holdout's spent-marker is the only evidence
-# that the single permitted evaluation has happened; untracked, a fresh clone reads the holdout as
-# unspent and the guard lets it be spent a second time.
+# Everything under `artifacts/` is machine-written, and most of it — fitted releases, per-day run
+# bundles, demo output — is reproducible bulk that would only make the history heavy. These five are
+# the exceptions, because each is evidence a reader cannot regenerate for themselves.
+#
+# The spent-marker first, because ADR-0018 depends on it: it is the only evidence that the single
+# permitted evaluation has happened, and untracked, a fresh clone reads the holdout as unspent and
+# the guard lets it be spent a second time.
 !artifacts/final_holdout.json
+# The other four are the measured record behind the report's figures and its Trial accounting.
+# `scripts/report_figures.py` reads the first three and cannot run without them; `trials.json` is
+# what makes the Trial budget auditable rather than asserted.
+!artifacts/arm_comparison.json
+!artifacts/bootstrap_intervals.json
+!artifacts/holdout_intervals.json
+!artifacts/trials.json
 mlruns/
 *.pt
 *.pth

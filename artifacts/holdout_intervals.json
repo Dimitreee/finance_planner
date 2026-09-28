@@ -1,0 +1,124 @@
+{
+  "confidence": 0.95,
+  "contract_digest": "538a0c73572b72dc03174ce99e3681c24f0755e73cdb68a0ad526e9bdba62d06",
+  "days": 334,
+  "describes_marker": "/Users/barrylarge/Study/finalproject/artifacts/final_holdout.json",
+  "is_second_evaluation": false,
+  "quantities": [
+    {
+      "intervals": [
+        {
+          "block_days": 20,
+          "estimate": -0.0006668115973893748,
+          "lower": -0.007162027010797462,
+          "role": "reported",
+          "seed": 20260928,
+          "upper": 0.006844492172046997,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 5,
+          "estimate": -0.0006668115973893748,
+          "lower": -0.007950296293017581,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 0.006520903596217766,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 40,
+          "estimate": -0.0006668115973893748,
+          "lower": -0.0067143687128108425,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 0.006641017107493874,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        }
+      ],
+      "name": "daily log loss minus the no-skill reference, Final Holdout",
+      "standing": "description",
+      "units": "natural"
+    },
+    {
+      "intervals": [
+        {
+          "block_days": 20,
+          "estimate": -0.13401180653250766,
+          "lower": -0.6118165735825195,
+          "role": "reported",
+          "seed": 20260928,
+          "upper": 0.12412121573624241,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 5,
+          "estimate": -0.13401180653250766,
+          "lower": -0.6510748021572528,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 0.14186198927753693,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        },
+        {
+          "block_days": 40,
+          "estimate": -0.13401180653250766,
+          "lower": -0.6352456503665486,
+          "role": "sensitivity",
+          "seed": 20260928,
+          "upper": 0.11406091497731713,
+          "verdict": "Inconclusive",
+          "verdict_stable_across_seeds": true,
+          "verdicts_by_stability_seed": {
+            "20260929": "Inconclusive",
+            "20260930": "Inconclusive",
+            "20261001": "Inconclusive",
+            "20261002": "Inconclusive"
+          }
+        }
+      ],
+      "name": "net cumulative return after costs minus buy-and-hold, Final Holdout",
+      "standing": "description",
+      "units": "percent"
+    }
+  ],
+  "reported_block_days": 20,
+  "resamples": 10000,
+  "seed": 20260928,
+  "spends_a_trial": false,
+  "spent_at": "2026-09-28T08:24:18.037322+00:00"
+}

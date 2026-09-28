@@ -1,0 +1,74 @@
+[
+  {
+    "number": 1,
+    "arm": "A",
+    "lag_hours": null,
+    "contract_digest": "1a901ec504a60bd39f05251fbce8f8d30e727e8be2d792f318b754a07d970472",
+    "score": 0.6943589668354004,
+    "recorded_at": "2026-09-27T23:16:58.970007+00:00",
+    "corrects": null
+  },
+  {
+    "number": 2,
+    "arm": "A",
+    "lag_hours": null,
+    "contract_digest": "1a901ec504a60bd39f05251fbce8f8d30e727e8be2d792f318b754a07d970472",
+    "score": 0.6943589668354004,
+    "recorded_at": "2026-09-27T23:28:57.899642+00:00",
+    "corrects": 1
+  },
+  {
+    "number": 3,
+    "arm": "B",
+    "lag_hours": 1,
+    "contract_digest": "fa3597c129003b9a878802b663208cf068def4ace762823ce1bf1f1e44406e69",
+    "score": 0.6954328009717414,
+    "recorded_at": "2026-09-28T06:19:38.563918+00:00",
+    "corrects": null
+  },
+  {
+    "number": 4,
+    "arm": "B",
+    "lag_hours": 6,
+    "contract_digest": "fa3597c129003b9a878802b663208cf068def4ace762823ce1bf1f1e44406e69",
+    "score": 0.6955268546030619,
+    "recorded_at": "2026-09-28T06:19:39.569678+00:00",
+    "corrects": null
+  },
+  {
+    "number": 5,
+    "arm": "B",
+    "lag_hours": 24,
+    "contract_digest": "fa3597c129003b9a878802b663208cf068def4ace762823ce1bf1f1e44406e69",
+    "score": 0.6988317119985823,
+    "recorded_at": "2026-09-28T06:19:40.628892+00:00",
+    "corrects": null
+  },
+  {
+    "number": 6,
+    "arm": "C",
+    "lag_hours": 1,
+    "contract_digest": "fa3597c129003b9a878802b663208cf068def4ace762823ce1bf1f1e44406e69",
+    "score": 0.6964675242336839,
+    "recorded_at": "2026-09-28T06:19:41.758833+00:00",
+    "corrects": null
+  },
+  {
+    "number": 7,
+    "arm": "C",
+    "lag_hours": 6,
+    "contract_digest": "fa3597c129003b9a878802b663208cf068def4ace762823ce1bf1f1e44406e69",
+    "score": 0.697251992701894,
+    "recorded_at": "2026-09-28T06:19:42.946762+00:00",
+    "corrects": null
+  },
+  {
+    "number": 8,
+    "arm": "C",
+    "lag_hours": 24,
+    "contract_digest": "fa3597c129003b9a878802b663208cf068def4ace762823ce1bf1f1e44406e69",
+    "score": 0.6998557330889084,
+    "recorded_at": "2026-09-28T06:19:44.103823+00:00",
+    "corrects": null
+  }
+]

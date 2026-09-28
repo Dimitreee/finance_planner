@@ -104,6 +104,19 @@ def render(interval: BootstrapInterval, units: str) -> str:
     )
 
 
+def _repo_relative(path: Path) -> str:
+    """The marker's path as the repository sees it, falling back to what was given.
+
+    This script's other paths are already relative to the working directory, so the marker was the
+    one field that could bake an absolute path — and therefore a machine's directory layout and
+    username — into an artifact meant to be published.
+    """
+    try:
+        return str(path.resolve().relative_to(Path.cwd().resolve()))
+    except ValueError:
+        return str(path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--snapshot", type=Path, default=SNAPSHOT)
@@ -170,7 +183,9 @@ def main() -> int:
         ),
     ]
     payload = {
-        "describes_marker": str(arguments.marker),
+        # Relative to the repository when it lies inside it, so a published artifact carries the
+        # marker it describes rather than the directory layout of the machine that produced it.
+        "describes_marker": _repo_relative(arguments.marker),
         "spent_at": recorded.spent_at,
         "contract_digest": contract.digest,
         "days": recorded.result.scored_days,
